@@ -10,12 +10,6 @@ from docx.shared import Inches
 
 from bin.load_data import load_and_preprocessing_data
 
-# from main import time_report_and_logger, write_to_log
-
-
-# WD_TABLE_ALIGNMENT = docx.
-# WD_TABLE_ALIGNMENT = docx.enum.table.WD_TABLE_ALIGNMENT
-# WD_CELL_VERTICAL_ALIGNMENT = docx.enum.table.WD_CELL_VERTICAL_ALIGNMENT
 
 #####################################################
 #                                                   #
@@ -145,7 +139,6 @@ def create_df_ui(df_authors):
     return finish_df
 
 
-# @time_report_and_logger
 def create_UI_docx(df_UI, path_dir_to_save):
     """Create a document (.docx) for UI and fill this doc a data about authors
 
@@ -192,7 +185,6 @@ def create_UI_docx(df_UI, path_dir_to_save):
     doc.save(f"{path_dir_to_save}{os.sep}table_for_UI__{created_date}.docx")
 
 
-# @time_report_and_logger
 def generate_file_UI(df_authors, dir_for_save=''):
     """The finished function for the full cycle of UI generation
 
@@ -403,7 +395,6 @@ def generate_text_for_one(df_row, doc, organization):
     return doc
 
 
-# @time_report_and_logger
 def create_doc_with_UA_1part(df_authors):
     """Creating the text part of the UA in a doc file, by all authors
 
@@ -454,7 +445,6 @@ def create_df_ua_part2(df_authors):
 #       Second, to add a second rows with smaller font and the identical data
 #       Third, to add a third empty rows (between other cells)
 #  Maybe one of this will be more faster than it's now
-# @time_report_and_logger
 def create_UA_docx(doc, df_UA, signature_date, path_dir_to_save):
     """Add the table in UA and save the result UA document (both text and table)
 
@@ -548,7 +538,6 @@ def create_UA_docx(doc, df_UA, signature_date, path_dir_to_save):
 
 # ToDo: Проверить используемые библеотеки на лицензии, какие услвия, особенно
 #  для оформления РИД
-# @time_report_and_logger
 def create_sign_date(date=''):
     """Creating a line with the signature date in the desired design
 
@@ -572,7 +561,6 @@ def create_sign_date(date=''):
     return sign_date
 
 
-# @time_report_and_logger
 def generate_file_UA(df_authors, dir_for_save='', sign_date=''):
     """Creating the UA doc file based on the authors' data
 
@@ -602,7 +590,6 @@ def generate_file_UA(df_authors, dir_for_save='', sign_date=''):
 #                 LAUNCH BLOCK                      #
 #                                                   #
 #####################################################
-# @time_report_and_logger
 def make_UI_and_UA(path_to_authors_data, dir_for_save_file):
     """Launch creating UI and UA
 
@@ -620,7 +607,6 @@ def make_UI_and_UA(path_to_authors_data, dir_for_save_file):
     generate_file_UA(df_in, dir_for_save=dir_for_save_file)
 
 
-# @time_report_and_logger
 def make_only_UI(path_to_authors_data, dir_for_save_file):
     """Launch creating only UI
 
@@ -637,7 +623,6 @@ def make_only_UI(path_to_authors_data, dir_for_save_file):
     generate_file_UI(df_in, dir_for_save_file)
 
 
-# @time_report_and_logger
 def make_only_UA(path_to_authors_data, dir_for_save_file):
     """Launch creating only UA
 

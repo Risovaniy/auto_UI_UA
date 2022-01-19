@@ -7,9 +7,7 @@ import pandas as pd
 import os.path
 from pandas_ods_reader import read_ods
 
-# from main import write_to_log
 
-# STOP HERE!!!
 # ToDo: Add to load fns for only UI and only UA creating (need fewer columns)
 def check_exists_file(filename):
     """The simple file existence check
