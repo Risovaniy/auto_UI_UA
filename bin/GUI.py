@@ -1,507 +1,645 @@
-# #### Copy GUI.py
-#
-# import os
-#
-# import PySimpleGUIQt as sg
-# from configparser import ConfigParser
-#
-# import pathlib
-#
-# from bin.create_UI_and_UA import make_only_UI, make_UI_and_UA, make_only_UA
-#
-#
-# MY_ICON = str(f"{pathlib.Path.cwd()}{os.sep}resources{os.sep}assist_icon.png")
-#
-#
-# def my_popup(text='',
-#              title='Main title',
-#              custom_text=('Button Yes', 'Button No'),
-#              icon=MY_ICON,
-#              line_width=None,
-#              font=('ANY', 16),  # , 'Bold'),
-#              grab_anywhere=True,
-#              keep_on_top=True,
-#              location=None):
-#     answer = sg.Popup(text,
-#                       title=title,
-#                       custom_text=custom_text,
-#                       icon=icon,
-#                       line_width=line_width,
-#                       font=font,
-#                       grab_anywhere=grab_anywhere,
-#                       keep_on_top=keep_on_top,
-#                       location=location)
-#
-#     return True if answer == custom_text[0] else False
-#
-#
-# def popup_close(config,
-#                 language,
-#                 icon=MY_ICON,
-#                 line_width=None,
-#                 font=('ANY', 16),  # , 'Bold'),
-#                 grab_anywhere=True,
-#                 keep_on_top=True,
-#                 location=None,
-#                 ):
-#     title = config.get(language, 'popup_close_title')
-#
-#     text = config.get(language, 'popup_close_text')
-#
-#     b_text_yes = config.get(language, 'popup_close_b_yes')
-#     b_text_no = config.get(language, 'popup_close_b_no')
-#     buttons_text = (b_text_yes, b_text_no)
-#
-#     return my_popup(text=text,
-#                     title=title,
-#                     custom_text=buttons_text,
-#                     icon=icon,
-#                     line_width=line_width,
-#                     font=font,
-#                     grab_anywhere=grab_anywhere,
-#                     keep_on_top=keep_on_top,
-#                     location=location)
-#
-#
-# # New main window
-# def create_main_layout(conf, language):
-#     main_layout = [
-#         [sg.Stretch(),
-#          sg.Text(conf.get(language, 'm_welcome'), justification='center'),
-#          sg.Stretch()],
-# 1
-#         [sg.Text()],
-#
-#         [sg.Button(conf.get(language, 'b_manual_work'),
-#                    size_px=(230, 30),
-#                    key='b_manual_work'),
-#          sg.Stretch(),
-#          sg.Stretch(),
-#          sg.Button(conf.get(language, 'b_manual_table'),
-#                    size_px=(230, 30),
-#                    key='b_manual_table')],
-#
-#         [sg.Text()],
-#         [sg.Text()],
-#         [sg.Text(conf.get(language, 'l_please_input_path'))],
-#
-#         [sg.Text(conf.get(language, 'l_input_path')),
-#          sg.InputText(default_text=str(pathlib.Path.home()), key='input_path'),
-#          sg.FileBrowse(conf.get(language, 'b_file_browse'),
-#                        size=(125, 30))],
-#
-#         [sg.Text()],
-#         [sg.Text()],
-#         [sg.Text(conf.get(language, 'l_please_output_path'))],
-#
-#         [sg.Text(conf.get(language, 'l_output_path')),
-#          sg.InputText(default_text=str(pathlib.Path.home()), key='output_path'),
-#          sg.FolderBrowse(conf.get(language, 'b_folder_browse'),
-#                          size=(125, 30), pad=True)],
-#
-#         [sg.Text()],
-#         [sg.Text()],
-#         [sg.Text()],
-#         [sg.Text()],
-#
-#         # Задать размеры кнопок (какие-то относительные выбрать)
-#         [sg.Stretch(),
-#          sg.Button(conf.get(language, 'b_create_UI'),
-#                    key='b_create_UI',
-#                    size_px=(200, 30)),
-#          sg.Button(conf.get(language, 'b_create_UA'),
-#                    key='b_create_UA',
-#                    size_px=(200, 30)),
-#          sg.Button(conf.get(language, 'b_create_UI_and_UA'),
-#                    key='b_create_all',
-#                    size_px=(200, 30)),
-#          sg.Stretch()],
-#
-#         [sg.Text()],
-#         [sg.Text()],
-#
-#         [sg.Stretch(), sg.Button(conf.get(language, 'b_close'),
-#                                  key='b_close',
-#                                  size_px=(100, 30))]
-#     ]
-#
-#     return main_layout
-#
-#
-# def create_main_window(config, language):
-#     # Add a theme
-#     sg.ChangeLookAndFeel(config.get('THEMES', "theme"))
-#     # sg.SetOptions(window_location=(300, 250))
-#     # Create the Window
-#     window = sg.Window(
-#         title=config.get(language, 'program_fullname'),
-#         layout=create_main_layout(config, language),
-#         icon=MY_ICON,
-#         resizable=(350, 450)
-#     )
-#     return window
-#
-#
-# def read_config_and_language():
-#     # instantiate configs
-#     config = ConfigParser()
-#
-#     # parse existing file (c - config)
-#
-#     config.read('resources/config.ini')
-#
-#     # read the language selected by the user (l - language)
-#     language = (config.get('LOCALLY', "language")).upper()
-#
-#     return config, language
-#
-#
-# def start_main_window():
-#     # Preparations and settings for the main window of program
-#
-#     # Load configurations and language
-#     config, language = read_config_and_language()
-#
-#     # Create the Window
-#     # window = create_main_window(config, language)
-#     window = sg.Window(
-#         title=config.get(language, 'program_fullname'),
-#         layout=create_main_layout(config, language),
-#         icon=MY_ICON,
-#         resizable=(350, 450))
-#
-#     print(window.close())
-#     # Start my cycle for active interaction with the program interface
-#     while True:
-#         # Reading the current state of the interface
-#         event, values = window.read()
-#
-#         # Determine which event was triggered and execute it
-#
-#         # ToDo Если открыто окно "Точно закрыть?" и закрыть прогру на крестик -
-#         #  окно останется - но это бесмысленно
-#
-#         # If the "close program" button was pressed
-#         if event in (sg.WIN_CLOSED, config.get(language, 'b_close')):
-#             if popup_close(config, language):
-#                 break
-#             else:
-#                 continue
-#
-#         # If the "create file(s)" button(s) was(re) pressed
-#         elif event in (config.get(language, 'b_create_UI'),
-#                        config.get(language, 'b_create_UA'),
-#                        config.get(language, 'b_create_UI_and_UA')):
-#             if create_files(MY_ICON, event, values, config, language):
-#                 print('Successfully')
-#             else:
-#                 print('Line 191 have an error into fn on 188 line')
-#
-#         # If the "show the manual to program work" button was pressed
-#         elif event == config.get(language, 'b_manual_work'):
-#             show_manual_how_work_program(config, language)
-#
-#         # If the "show the manual to table with authors data" button was pressed
-#         elif event == config.get(language, 'b_manual_table'):
-#             show_manual_how_fill_authors_table(config, language)
-#
-#     # Exit from cycle and close the main window
-#     window.close()
-#     return window
-#
-#
-# def close_program(event, config, language, icon):
-#     # If the "close program" button was pressed
-#     # ToDo Если открыто окно "Точно закрыть?" и закрыть прогру на крестик -
-#     #  окно останется - но это бесмысленно
-#     if event in (sg.WIN_CLOSED, config.get(language, 'b_close')):
-#         # if user closes window or clicks cancel
-#         if event == config.get(language, 'b_close') and \
-#                 are_you_sure(config, language):
-#             return True
-#
-#
-# def are_you_sure(config, language, path_files, path_authors_data):
-#     title = config.get(language, 'popup_create_title')
-#
-#     text = config.get(language, 'popup_create_text')
-#     # ToDo: Check when i have two files: in 1 line or split for 2 lines?
-#     text = text.replace('$create_files$', str(path_files))
-#     text = text.replace('$authors_table$', str(path_authors_data))
-#
-#     button_1_text = config.get(language, 'popup_create_b_yes')
-#     button_2_text = config.get(language, 'popup_create_b_no')
-#     buttons_text = (button_1_text, button_2_text)
-#
-#     return my_popup(text=text,
-#                     title=title,
-#                     custom_text=buttons_text
-#                     )
-#
-#
-# def create_files(event, values, config, language):
-#     path_input_data = values['input_path']
-#     path_output_dir = values['output_path']
-#
-#     if event == (config.get(language, 'b_create_UI')) and \
-#             are_you_sure(config,
-#                          language,
-#                          config.get(language, 'b_create_UI'),
-#                          path_input_data):
-#         make_only_UI(path_input_data, path_output_dir)
-#
-#
-#     elif event == (config.get(language, 'b_create_UA')) and \
-#             are_you_sure(config,
-#                          language,
-#                          config.get(language, 'b_create_UA'),
-#                          path_input_data):
-#         make_only_UA(path_input_data, path_output_dir)
-#
-#     elif event == (config.get(language, 'b_create_UI_and_UA')) and \
-#             are_you_sure(config,
-#                          language,
-#                          config.get(language, 'b_create_UI_and_UA'),
-#                          path_input_data):
-#         make_UI_and_UA(path_input_data, path_output_dir)
-#
-#     else:
-#         return False
-#
-#     return True
-#
-#
-# def show_manual_how_work_program(config, language):
-#     # If the "show the manual to program work" button was pressed
-#     # if event == config.get(language, 'b_manual_work'):
-#     message = config.get(language, 'manual_work')
-#     return sg.popup_ok(message,
-#                        icon=MY_ICON,
-#                        keep_on_top=True,
-#                        grab_anywhere=True)
-#
-#
-# def show_manual_how_fill_authors_table(config, language):
-#     # If the "show the manual to table with authors data" button was pressed
-#     # if event == config.get(language, 'b_manual_table'):
-#     message = config.get(language, 'manual_table')
-#     return sg.popup_ok(message,
-#                        icon=MY_ICON,
-#                        keep_on_top=True,
-#                        grab_anywhere=True)
-#
-#
-# def testing():
-#     config, language = read_config_and_language()
-#
-#     window = sg.Window(
-#         title=config.get(language, 'program_fullname'),
-#         layout=create_main_layout(config, language),
-#         icon=MY_ICON,
-#         resizable=(350, 450))
-#     # layout = [[sg.Text()],
-#     #           [sg.Text()],
-#     #
-#     #           [sg.Stretch(), sg.Button('b_close',
-#     #                                    key='b_close',
-#     #                                    size_px=(100, 30))]
-#     #           ]
-#     # window = sg.Window('Test window', layout)
-#
-#     while True:
-#         event, values = window.read()
-#         print(event, values)
-#     # show(window)
-#     window.close()
-#     return window
-#
-#
-# if __name__ == "__main__":
-#     # start_main_window()
-#     testing()
+# -*- coding: utf-8 -*-
 
-# #### Copy GUIqt5.py
-#
-#
-# import sys
-#
-# from PyQt5 import QtWidgets
-# from PyQt5.QtWidgets import QApplication, QMainWindow
-#
-#
-# class Window(QMainWindow):
-#     def __init__(self):
-#         super(Window, self).__init__()
-#
-#         self.setGeometry(300, 200, 500, 400)
-#         self.setWindowTitle('My window title')
-#         self.main_label = QtWidgets.QLabel(self)
-#         self.main_label.setText(
-#             'Это просто длинный текст: алодвыафвыарвыфравфавыфафвыафравфырдарыфварвыфрдавыдфадрыфоавыфлавыфадфвыдрафвырдафрыфварфвы')
-#
-#         self.new_text = QtWidgets.QLabel(self)
-#
-#         # Подстроить ширину объекта под его содержимое!!!
-#         self.main_label.adjustSize()
-#
-#         self.main_label.move(100, 300)
-#
-#         # Added simple button
-#         self.main_btn = QtWidgets.QPushButton(self)
-#         self.main_btn.setText('Push me!!!')
-#         self.main_btn.setFixedWidth(700)
-#         self.main_btn.move(10, 30)
-#         self.main_btn.clicked.connect(self.add_label)
-#
-#     def add_label(self):
-#         print('add')
-#         self.new_text.setText('Second text')
-#
-#
-#
-#
-# def application():
-#     # Set parameters of current PC
-#     app = QApplication(sys.argv)
-#
-#     # Create the main window
-#     window = Window()
-#
-#     # Different settings of the main window
-#
-#
-#     # Show our window
-#     window.show()
-#
-#     # To display the window correctly
-#     sys.exit(app.exec_())
-#
-#
-# if __name__=='__main__':
-#     application()
-#
-#
-#
-#
-#
-# # import sys
-# # from configparser import ConfigParser
-# #
-# # from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, \
-# #     QGridLayout, QLCDNumber
-# # from PyQt5.QtGui import QIcon, QFont
-# #
-# # # from bin.GUI import read_config_and_language
-# #
-# # # ToDo: Rename and move icon
-# # MY_ICON = "TRASH_assist_icon.png"
-# #
-# #
-# #
-# #
-# # def create_main_window(title='Title', left=None, top=None, width=None, height=None):
-# #     if not left:
-# #         # Getting the parameters of the active monitor
-# #         desktop_width = QApplication.desktop().availableGeometry().width() #QApplication.desktop().width()
-# #         desktop_height = QApplication.desktop().availableGeometry().height() #QApplication.desktop().height()
-# #
-# #         # Set parameters of window
-# #         width = desktop_height * 0.5
-# #         height = desktop_height * 0.5
-# #         left = desktop_width * 0.25
-# #         top = desktop_height * 0.25
-# #
-# #     window = QMainWindow()
-# #     window.setGeometry(left, top, width, height)
-# #     window.setWindowTitle(title)
-# #     window.setWindowIcon(QIcon(MY_ICON))
-# #
-# #     return window
-# #
-# #
-# # # ToDo: Remove this fn or edit - this is local copy from GUI
-# # def read_config_and_language():
-# #     # instantiate configs
-# #     config = ConfigParser()
-# #
-# #     # parse existing file (c - config)
-# #
-# #     config.read('../resources/config.ini')
-# #
-# #     # read the language selected by the user (l - language)
-# #     language = (config.get('LOCALLY', "language")).upper()
-# #
-# #     return config, language
-# #
-# #
-# # def create_main_label(window):
-# #     label = QLabel(window)
-# #
-# #     window_width = window.size().width()
-# #     window_height = window.size().height()
-# #
-# #     config, language = read_config_and_language()
-# #
-# #     text = config.get(language, 'm_welcome')
-# #
-# #     label.setMinimumWidth(window_width*0.9)
-# #     label.setText(text)
-# #     label.setFont(QFont('System', 22, QFont.Bold))
-# #
-# #     label.move(0.015*window_height, 0.015*window_width)
-# #     return label
-# #
-# #
-# # def main():
-# #     app = QApplication(sys.argv)
-# #
-# #     win = create_main_window()
-# #
-# #     numbers = QLCDNumber()
-# #
-# #     win.setCentralWidget(QWidget())
-# #     QGridLayout(win).addWidget(numbers)
-# #     # win.
-# #
-# #
-# #     # Label Text
-# #     create_main_label(win)
-# #     # label.setText("Hi this is Pyqt5")
-# #     # label.move(100,100)
-# #
-# #     win.show()
-# #     sys.exit(app.exec_())
-# #
-# #
-# #
-# #
-# # # class App(QWidget):
-# # #
-# # #     def __init__(self, title='Title', left=10, top=10, width=300, height=250):
-# # #         super().__init__()
-# # #         self.textbox = QLineEdit(self)
-# # #         self.title = title
-# # #         self.left = left
-# # #         self.top = top
-# # #         self.width = width
-# # #         self.height = height
-# # #         self.icon = MY_ICON
-# # #         self.initUI()
-# # #
-# # #     def initUI(self):
-# # #         self.setWindowTitle(self.title)
-# # #         self.setGeometry(self.left, self.top, self.width, self.height)
-# # #         self.setWindowIcon(QIcon(self.icon))
-# # #         self.show()
-# # #
-# # #     def add_lable(self, text):
-# # #         self.textbox.move(20, 20)
-# # #         self.textbox.resize(280, 40)
-# #
-# #
-# # if __name__ == '__main__':
-# #     # app = QApplication(sys.argv)
-# #     # ex = App()
-# #     # sys.exit(app.exec_())
-# #
-# #     main()
+import os
+import pathlib as path
+from configparser import ConfigParser
+import PySimpleGUIQt as sg
+from bin.create_UI_UA import make_only_UI, make_only_UA, make_UI_and_UA
+
+
+# Location of my global icon
+GLOBAL_ICON = str(f"{path.Path.cwd()}{os.sep}resources{os.sep}global_icon.png")
+
+
+def read_config_and_language():
+    """Read the file with the localization block configs
+    (all text fields are written there)
+
+    :return: An object with configs according to the set locale
+    :rtype: tuple
+
+    """
+    # instantiate configs
+    config = ConfigParser()
+
+    # parse existing file (c - config)
+
+    config.read('./resources/config.ini')
+
+    # read the language selected by the user (l - language)
+    language = (config.get('LOCALLY', "-language-")).upper()
+
+    return config, language
+
+
+def popup_Yes_No(config,
+                 text='Just text',
+                 title='Main title',
+                 buttons_text=('Button Yes', 'Button No'),
+                 buttons_size=(70, 40),
+                 icon=GLOBAL_ICON,
+                 font=('Arial', 14),
+                 grab_anywhere=True,
+                 keep_on_top=True,
+                 location=(600, 400)):
+    """Displays a confirmation pop-up window, the names of the buttons can be changed
+
+    :param config: A file with configs for the current localization
+    :type config: configparser.ConfigParser
+    :param text: Clarifying text - "Are you sure?"
+    :type text: str
+    :param title: Title of the popup window
+    :type title: str
+    :param buttons_text: A tuple of button names, the first button returns True
+    :type buttons_text: tuple
+    :param buttons_size: Tuple of button sizes in pixels (width, height)
+    :type buttons_size: tuple
+    :param icon: The path to the popup icon
+    :type icon: str
+    :param font: A tuple with the characteristics of the text (size, outline, etc.)
+    :type font: tuple
+    :param grab_anywhere: Is it possible to move the window with a grip anywhere
+    :type grab_anywhere: bool
+    :param keep_on_top: Whether to support a window from above
+    :type keep_on_top: bool
+    :param location: Coordinates of the window appearance (centered if 1 screen)
+    :type location: tuple
+    :return: Confirmation or Rejection (True or False)
+    :rtype: bool
+
+    """
+    # Add a theme
+    sg.ChangeLookAndFeel(config.get('THEMES', "-theme_popup-"))
+
+    # Create the layout for popup
+    layout = [
+        [sg.Stretch(),
+         sg.Text(text, font=font),
+         sg.Stretch()
+         ],
+
+        [sg.Text(size=(1, 20))],
+
+        [sg.Stretch(),
+         sg.Button(button_text=buttons_text[0],
+                   size=buttons_size,
+                   font=font),
+         sg.Button(button_text=buttons_text[1],
+                   size=buttons_size,
+                   font=font)
+         ]
+    ]
+
+    # Create the popup
+    window = sg.Window(
+        title=title,
+        layout=layout,
+        icon=icon,
+        location=location,
+        resizable=False,
+        grab_anywhere=grab_anywhere,
+        keep_on_top=keep_on_top,
+    )
+
+    # Show and read the popup
+    event, values = window.Show()
+
+    # Close the popup
+    window.Close()
+
+    return True if event == buttons_text[0] else False
+
+
+def popup_Ok(config,
+             text='',
+             title='Main title',
+             buttons_text='Ok',
+             buttons_size=(150, 40),
+             icon=GLOBAL_ICON,
+             font=('Arial', 14),
+             grab_anywhere=True,
+             keep_on_top=True,
+             location=(600, 400)):
+    """Displays a confirmation pop-up window, with a changeable button name
+
+    :param config: A file with configs for the current localization
+    :type config: configparser.ConfigParser
+    :param text: Clarifying text - "Are you sure?"
+    :type text: str
+    :param title: Title of the popup window
+    :type title: str
+    :param buttons_text: The name of the button, usually "close"
+    :type buttons_text: str
+    :param buttons_size: Tuple of button sizes in pixels (width, height)
+    :type buttons_size: tuple
+    :param icon: The path to the popup icon
+    :type icon: str
+    :param font: A tuple with the characteristics of the text (size, outline, etc.)
+    :type font: tuple
+    :param grab_anywhere: Is it possible to move the window with a grip anywhere
+    :type grab_anywhere: bool
+    :param keep_on_top: Whether to support a window from above
+    :type keep_on_top: bool
+    :param location: Coordinates of the window appearance (centered if 1 screen)
+    :type location: tuple
+    :return: The window is informational, it can only be closed
+    :rtype: None
+
+    """
+    # Add a theme
+    sg.ChangeLookAndFeel(config.get('THEMES', "-theme_popup-"))
+
+    # Create the layout for popup
+    layout = [
+        [sg.Stretch(),
+         sg.Text(text, font=font),
+         sg.Stretch()
+         ],
+
+        [sg.Text(size=(1, 20))],
+
+        [sg.Stretch(),
+         sg.Button(button_text=buttons_text,
+                   # auto_size_button=True ,
+                   size=buttons_size,
+                   font=font)
+         ]
+    ]
+
+    # Create the popup
+    window = sg.Window(
+        title=title,
+        layout=layout,
+        icon=icon,
+        location=location,
+        resizable=False,
+        grab_anywhere=grab_anywhere,
+        keep_on_top=keep_on_top,
+    )
+
+    # Show and read the popup
+    window.Show()
+
+    # Close the popup
+    window.Close()
+
+    return None
+
+
+def popup_close(config,
+                language,
+                buttons_size=(70, 40),
+                icon=GLOBAL_ICON,
+                font=('Arial', 18),
+                grab_anywhere=True,
+                keep_on_top=True,
+                location=(600, 400),
+                ):
+    """Displays a pop-up window confirming the intention to close the program
+
+    :param config: A file with configs for the current localization
+    :type config: configparser.ConfigParser
+    :param language: The current localization
+    :type language: str
+    :param buttons_size: Tuple of button sizes in pixels (width, height)
+    :type buttons_size: tuple
+    :param icon: The path to the popup icon
+    :type icon: str
+    :param font: A tuple with the characteristics of the text (size, outline, etc.)
+    :type font: tuple
+    :param grab_anywhere: Is it possible to move the window with a grip anywhere
+    :type grab_anywhere: bool
+    :param keep_on_top: Whether to support a window from above
+    :type keep_on_top: bool
+    :param location: Coordinates of the window appearance (centered if 1 screen)
+    :type location: tuple
+    :return: Logical value to close or not the program
+    :rtype: bool
+
+    """
+    title = config.get(language, '-n_pop_close-')
+
+    text = config.get(language, '-t_pop_close-')
+
+    b_text_yes = config.get(language, '-b_yes-')
+    b_text_no = config.get(language, '-b_no-')
+
+    return popup_Yes_No(config=config,
+                        text=text,
+                        title=title,
+                        buttons_text=(b_text_yes, b_text_no),
+                        buttons_size=buttons_size,
+                        icon=icon,
+                        font=font,
+                        grab_anywhere=grab_anywhere,
+                        keep_on_top=keep_on_top,
+                        location=location)
+
+
+def show_manual_work_program(config, language, icon=GLOBAL_ICON):
+    """Show a popup with a guide to working in the program
+    (without blocking the main window)
+
+    :param config: A file with configs for the current localization
+    :type config: configparser.ConfigParser
+    :param language: The current localization
+    :type language: str
+    :param icon: The path to the popup icon
+    :type icon: str
+    :return: The window with the manual can only be closed
+    :rtype: None
+
+    """
+    message = config.get(language, '-t_manual_prog-')
+    title = config.get(language, '-n_manual_prog-')
+    buttons_text = config.get(language, '-b_close-')
+
+    return popup_Ok(config=config,
+                    text=message,
+                    title=title,
+                    buttons_text=buttons_text,
+                    location=(100, 60),
+                    icon=icon)
+
+
+def show_manual_input_data(config, language, icon=GLOBAL_ICON):
+    """Show a popup with a guide to filling out a table with data about authors
+    (without blocking the main window)
+
+    :param config: A file with configs for the current localization
+    :type config: configparser.ConfigParser
+    :param language: The current localization
+    :type language: str
+    :param icon: The path to the popup icon
+    :type icon: str
+    :return: The window with the manual can only be closed
+    :rtype: None
+
+    """
+    message = config.get(language, '-t_manual_data-')
+    title = config.get(language, '-n_manual_data-')
+    buttons_text = config.get(language, '-b_close-')
+
+    return popup_Ok(config=config,
+                    text=message,
+                    title=title,
+                    buttons_text=buttons_text,
+                    location=(100, 60),
+                    icon=icon)
+
+
+def popup_error(config, language, icon=GLOBAL_ICON):
+    """Show a popup signaling that an error has occurred during the execution
+    of the program, and calling for a restart
+
+    :param config: A file with configs for the current localization
+    :type config: configparser.ConfigParser
+    :param language: The current localization
+    :type language: str
+    :param icon: The path to the popup icon
+    :type icon: str
+    :return: The window with the message can only be closed
+    :rtype: None
+
+    """
+    pass
+    message = config.get(language, '-t_manual_data-')
+    title = config.get(language, '-n_manual_data-')
+    buttons_text = config.get(language, '-b_close-')
+
+    return popup_Ok(config=config,
+                    text=message,
+                    title=title,
+                    buttons_text=buttons_text,
+                    location=(100, 60),
+                    icon=icon)
+
+
+# ToDo: Если успешно: "Закрыть программу? -> Да / Нет"
+def popup_success(config, language, icon=GLOBAL_ICON):
+    """Show a window signaling the successful completion of the program
+
+    :param config: A file with configs for the current localization
+    :type config: configparser.ConfigParser
+    :param language: The current localization
+    :type language: str
+    :param icon: The path to the popup icon
+    :type icon: str
+    :return: The window with the message can only be closed
+    :rtype: None
+
+    """
+    pass
+
+
+def create_main_layout(config, language):
+    """Assembling all the elements of the main window
+
+    :param config: A file with configs for the current localization
+    :type config: configparser.ConfigParser
+    :param language: The current localization
+    :type language: str
+    :return: A list with all the elements of the interface (with a clear order)
+    :rtype: list
+
+    """
+    main_layout = [
+        # Welcome message
+        [sg.Stretch(),
+         sg.Text(config.get(language, '-t_welcome_prog-'),
+                 justification='center',
+                 auto_size_text=True,
+                 font=('Arial', 16)
+                 ),
+         sg.Stretch(),
+         ],
+
+        # Buttons for manuals
+        [sg.Button(config.get(language, '-b_manual_prog-'),
+                   size_px=(400, 40),
+                   key='-b_manual_prog-',
+                   font=('Arial', 14),
+                   # auto_size_button=True
+                   ),
+         sg.Stretch(),
+         sg.Stretch(),
+         sg.Button(config.get(language, '-b_manual_data-'),
+                   size_px=(400, 40),
+                   key='-b_manual_data-',
+                   font=('Arial', 14),
+                   # auto_size_button=True
+                   )
+         ],
+
+        # Horizontal separator
+        [sg.HorizontalSeparator()],
+
+        # Input data
+        [sg.Text(size=(1, 20))],
+        [sg.Text(config.get(language, '-t_welcome_data-'),
+                 font=('Arial', 12),
+                 )
+         ],
+
+        [sg.Text(config.get(language, '-t_data-'),
+                 font=('Arial', 12),
+                 ),
+         sg.InputText(default_text=str(path.Path.home()),
+                      key='-input_path-',
+                      font=('Arial', 12),
+                      ),
+         sg.FileBrowse(config.get(language, '-b_data-'),
+                       key='-b_browse_file-',
+                       size=(150, 40),
+                       font=('Arial', 12),
+                       )
+
+         ],
+
+        # Spaces
+        [sg.Text(size=(1, 20))],
+
+        # Dir for saving
+        [sg.Text(config.get(language, '-t_welcome_dir-'),
+                 font=('Arial', 12),
+                 )
+         ],
+
+        [sg.Text(config.get(language, '-t_dir-'),
+                 font=('Arial', 12),
+                 ),
+         sg.InputText(default_text=str(path.Path.home()),
+                      key='-output_path-',
+                      font=('Arial', 12),
+                      ),
+         sg.FolderBrowse(config.get(language, '-b_dir-'),
+                         key='-b_browse_dir-',
+                         size=(150, 40),
+                         font=('Arial', 12),
+                         ),
+         ],
+
+        # Spaces
+        [sg.Text(size=(1, 50))],
+
+        # Create buttons
+        [sg.Button(config.get(language, '-b_create_UI-'),
+                   key='-b_create_UI-',
+                   font=('Arial', 12),
+                   size_px=(300, 40)
+                   ),
+         sg.Button(config.get(language, '-b_create_UA-'),
+                   key='-b_create_UA-',
+                   font=('Arial', 12),
+                   size_px=(300, 40)
+                   ),
+         sg.Button(config.get(language, '-b_create_UI_and_UA-'),
+                   key='-b_create_UI_and_UA-',
+                   font=('Arial', 12),
+                   size_px=(300, 40)
+                   ),
+         ],
+
+        # Spaces
+        [sg.Text(size=(1, 50))],
+
+        # Close button
+        [sg.Stretch(),
+         sg.Button(config.get(language, '-b_close-'),
+                   key='-b_close-',
+                   size_px=(120, 40),
+                   font=('Arial', 12),
+                   )
+         ],
+    ]
+
+    return main_layout
+
+
+def create_main_window(config, language):
+    """Creating the main window of the program, styles and localization are
+    immediately applied
+
+    :param config: A file with configs for the current localization
+    :type config: configparser.ConfigParser
+    :param language: The current localization
+    :type language: str
+    :return: The main window of the program is ready for interaction
+    :rtype: PySimpleGUIQt.PySimpleGUIQt.Window
+
+    """
+    # Add a theme
+    sg.ChangeLookAndFeel(config.get('THEMES', "-theme_global-"))
+
+    # sg.SetOptions(window_location=(300, 250))
+    # Create the Window
+    window = sg.Window(
+        title=config.get(language, '-n_main_window-'),
+        layout=create_main_layout(config, language),
+        icon=GLOBAL_ICON,
+        location=(300, 200),
+        # resizable=False,
+        grab_anywhere=True,
+        # size=(1000, 600)
+    )
+
+    return window
+
+
+def launch_main_window():
+    """Launch and operation of the main working window of the program
+
+    :return: Interaction with the interface takes place inside the function
+    :rtype: None
+
+    """
+    # It is necessary that the first click is processed and not passed into empty
+    start = True
+    # Preparations and settings for the main window of program
+
+    # Load configurations and language
+    config, language = read_config_and_language()
+    # Create the main window
+    window = create_main_window(config, language)
+
+    # Start my cycle for active interaction with the program interface
+    while True:
+        if start:
+            # Show interface and reading the first user action
+            event, values = window.Show()
+            # The main window is running, now this part of the code is skipped
+            start = False
+        else:
+            # Reading user actions
+            event, values = window.read()
+
+        # ToDo: Remove it (it's temporary, for debugs)
+        print(event, values)
+
+        # Determine which event was triggered and execute it
+
+        # If the "close program" button was pressed
+        if event in (sg.WIN_CLOSED, '-b_close-'):
+            # Blocking the main window until a response is received from popup
+            window.Disable()
+
+            if event == sg.WIN_CLOSED:
+                break
+            elif popup_close(config, language):
+                break
+            else:
+                # Unlocking the main window, ready to accept new commands
+                window.Enable()
+                continue
+
+        # If the "create file(s)" button(s) was(re) pressed
+        elif event in (
+                '-b_create_UI-', '-b_create_UA-', '-b_create_UI_and_UA-'):
+            # Blocking the main window until a response is received from popup
+            window.Disable()
+            if create_files(event=event,
+                            values=values,
+                            config=config,
+                            language=language,
+                            icon=GLOBAL_ICON):
+                popup_success(config=config,
+                              language=language)
+                print('Successfully')
+
+            else:
+                popup_error(config=config,
+                            language=language)
+                print(f'Some error: \nEvent {event} \nValues {values}')
+
+            # Unlocking the main window, ready to accept new commands
+            window.Enable()
+
+        # If the "show the manual to program work" button was pressed
+        elif event == '-b_manual_prog-':
+            show_manual_work_program(config, language)
+
+        # If the "show the manual to table with authors data" button was pressed
+        elif event == '-b_manual_data-':
+            show_manual_input_data(config, language)
+
+    # Exit from cycle and close the main window
+    window.close()
+
+    return None
+
+
+def make_question_for_sure(config, language, config_key, path_data, path_dir):
+    """Assembling the text to clarify the creation of a document with the
+    selected parameters
+
+    :param config: A file with configs for the current localization
+    :type config: configparser.ConfigParser
+    :param language: The current localization
+    :type language: str
+    :param config_key: The key that will get the desired text from the config
+    :type config_key: str
+    :param path_dir: Absolute path to the file with data about authors
+    :type path_dir: str
+    :param path_data: Absolute path to the directory for save creating files
+    :type path_data: str
+    :return: Clarifying question to the user with the settings selected by him
+    :rtype: str
+
+    """
+    answer = config.get(language, config_key). \
+        replace('$input_path$', path_data). \
+        replace('$output_path$', path_dir)
+
+    return answer
+
+
+def create_files(event, values, config, language, icon):
+    """Processing the pressed button and calling the corresponding function
+    for creating documents
+
+    :param event: The key of the current event in the GUI (button key)
+    :type event: str
+    :param values: Dictionary with current interface parameters
+    :type values: dict
+    :param config: A file with configs for the current localization
+    :type config: configparser.ConfigParser
+    :param language: The current localization
+    :type language: str
+    :param icon: The path to the popup icon
+    :type icon: str
+    :return: The key that informs about the success of the function
+    :rtype: bool
+
+    """
+    path_input_data = values['-input_path-']
+    path_output_dir = values['-output_path-']
+    question = make_question_for_sure(config=config,
+                                      language=language,
+                                      config_key=event,
+                                      path_data=path_input_data,
+                                      path_dir=path_output_dir)
+
+    # The key that informs about the success of the function
+    result = False
+    if popup_Yes_No(config=config,
+                    text=question,
+                    title=config.get(language, '-n_sure-'),
+                    buttons_text=(config.get(language, '-b_yes-'),
+                                  config.get(language, '-b_no-')),
+                    icon=icon):
+        if event == '-b_create_UI-':
+            make_only_UI(path_input_data, path_output_dir)
+            result = True
+            print('made_UI')
+
+        elif event == '-b_create_UA-':
+            make_only_UA(path_input_data, path_output_dir)
+            result = True
+            print('made_UA')
+
+        elif event == '-b_create_UI_and_UA-':
+            make_UI_and_UA(path_input_data, path_output_dir)
+            result = True
+            print('made_UI_and_UA')
+
+    return result

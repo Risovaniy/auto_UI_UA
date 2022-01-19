@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
+
 """Loading source data into a dataframe about authors and initial preprocessing
 of this dataframe"""
 import re
 import pandas as pd
 import os.path
+from pandas_ods_reader import read_ods
 
-from main import write_to_log
+# from main import write_to_log
 
 # STOP HERE!!!
 # ToDo: Add to load fns for only UI and only UA creating (need fewer columns)
@@ -42,6 +45,11 @@ def extract_extension_from_filename(filename):
 
 def load_file_to_df(full_filename, separator=';'):
     """Loading source data from a file into a DataFrame
+    Additional installing for different formats:
+    odf  - pip install odfpy
+    xls  - pip install xlrd
+    xlsx - pip install openpyxl
+    read_ods - pip install pandas-ods-reader
 
     :param full_filename: Full path to the source data file
     :type full_filename: str
@@ -58,29 +66,32 @@ def load_file_to_df(full_filename, separator=';'):
     if check_exists_file(full_filename):
         extension = extract_extension_from_filename(full_filename)
         if extension:
-            office_extension = ['xlsx', 'xls', 'xlsm', 'xlsb',
-                                'ods', 'odt', 'xods', 'xots']
+            office_MS_extension = ['xlsx', 'xls', 'xlsm', 'xlsb']
+            office_Open_extension = ['ods', 'odt', 'xods', 'xots']
             csv_extension = ['csv', 'txt']
 
-            if extension in office_extension:
+            if extension in office_MS_extension:
                 return pd.read_excel(full_filename)
+
+            elif extension in office_Open_extension:
+                return read_ods(full_filename)
 
             elif extension in csv_extension:
                 return pd.read_csv(full_filename, sep=separator)
 
-        write_to_log(
-            f'This file format {extension} ({full_filename}) is not supported',
-            fn_name='load_file_to_df',
-            filename='load_data.py',
-            line_number=57)
+        # write_to_log(
+        #     f'This file format {extension} ({full_filename}) is not supported',
+        #     fn_name='load_file_to_df',
+        #     filename='load_data.py',
+        #     line_number=57)
 
         return None
 
-    write_to_log(
-        f'This file {full_filename} is not exist',
-        fn_name='load_file_to_df',
-        filename='load_data.py',
-        line_number=64)
+    # write_to_log(
+    #     f'This file {full_filename} is not exist',
+    #     fn_name='load_file_to_df',
+    #     filename='load_data.py',
+    #     line_number=64)
 
     return None
 
@@ -99,7 +110,7 @@ def rename_columns(df_raw):
     # the order of the columns themselves
     dict_for_renaming = {'Фамилия': 'last_name',
                          'Имя': 'first_name',
-                         'Отчевство': 'middle_name',
+                         'Отчество': 'middle_name',
                          'Должность и ученое звание': 'post',
                          'Место работы': 'job',
                          'Творческий вклад': 'contribution',
@@ -125,12 +136,12 @@ def rename_columns(df_raw):
               'Дата трудоустройства\n\n '
               f'P.S. Порядок колонок не важен.\n\n {error}')
 
-        write_to_log(
-            f'Столбцы в исходных данных имеют некорректные названия '
-            f'({df_raw.columns})',
-            fn_name='rename_columns',
-            filename='load_data.py',
-            line_number=112)
+        # write_to_log(
+        #     f'Столбцы в исходных данных имеют некорректные названия '
+        #     f'({df_raw.columns})',
+        #     fn_name='rename_columns',
+        #     filename='load_data.py',
+        #     line_number=112)
 
         return None
 
