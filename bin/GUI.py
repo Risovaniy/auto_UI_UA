@@ -6,7 +6,6 @@ from configparser import ConfigParser
 import PySimpleGUIQt as sg
 from bin.create_UI_UA import make_only_UI, make_only_UA, make_UI_and_UA
 
-
 # Location of my global icon
 GLOBAL_ICON = str(f"{path.Path.cwd()}{os.sep}resources{os.sep}global_icon.png")
 
@@ -41,7 +40,8 @@ def popup_Yes_No(config,
                  font=('Arial', 14),
                  grab_anywhere=True,
                  keep_on_top=True,
-                 location=(600, 400)):
+                 location=(600, 400)
+                 ):
     """Displays a confirmation pop-up window, the names of the buttons can be changed
 
     :param config: A file with configs for the current localization
@@ -83,23 +83,26 @@ def popup_Yes_No(config,
         [sg.Stretch(),
          sg.Button(button_text=buttons_text[0],
                    size=buttons_size,
-                   font=font),
+                   font=font
+                   ),
          sg.Button(button_text=buttons_text[1],
                    size=buttons_size,
-                   font=font)
+                   font=font
+                   )
          ]
-    ]
+        ]
 
     # Create the popup
     window = sg.Window(
-        title=title,
-        layout=layout,
-        icon=icon,
-        location=location,
-        resizable=False,
-        grab_anywhere=grab_anywhere,
-        keep_on_top=keep_on_top,
-    )
+            title=title,
+            layout=layout,
+            icon=icon,
+            location=location,
+            resizable=False,
+            grab_anywhere=grab_anywhere,
+            keep_on_top=keep_on_top,
+            )
+
 
     # Show and read the popup
     event, values = window.Show()
@@ -119,7 +122,8 @@ def popup_Ok(config,
              font=('Arial', 14),
              grab_anywhere=True,
              keep_on_top=True,
-             location=(600, 400)):
+             location=(600, 400)
+             ):
     """Displays a confirmation pop-up window, with a changeable button name
 
     :param config: A file with configs for the current localization
@@ -162,20 +166,21 @@ def popup_Ok(config,
          sg.Button(button_text=buttons_text,
                    # auto_size_button=True ,
                    size=buttons_size,
-                   font=font)
+                   font=font
+                   )
          ]
-    ]
+        ]
 
     # Create the popup
     window = sg.Window(
-        title=title,
-        layout=layout,
-        icon=icon,
-        location=location,
-        resizable=False,
-        grab_anywhere=grab_anywhere,
-        keep_on_top=keep_on_top,
-    )
+            title=title,
+            layout=layout,
+            icon=icon,
+            location=location,
+            resizable=False,
+            grab_anywhere=grab_anywhere,
+            keep_on_top=keep_on_top,
+            )
 
     # Show and read the popup
     window.Show()
@@ -233,7 +238,8 @@ def popup_close(config,
                         font=font,
                         grab_anywhere=grab_anywhere,
                         keep_on_top=keep_on_top,
-                        location=location)
+                        location=location
+                        )
 
 
 def show_manual_work_program(config, language, icon=GLOBAL_ICON):
@@ -259,7 +265,8 @@ def show_manual_work_program(config, language, icon=GLOBAL_ICON):
                     title=title,
                     buttons_text=buttons_text,
                     location=(100, 60),
-                    icon=icon)
+                    icon=icon
+                    )
 
 
 def show_manual_input_data(config, language, icon=GLOBAL_ICON):
@@ -285,7 +292,8 @@ def show_manual_input_data(config, language, icon=GLOBAL_ICON):
                     title=title,
                     buttons_text=buttons_text,
                     location=(100, 60),
-                    icon=icon)
+                    icon=icon
+                    )
 
 
 def popup_error(config, language, icon=GLOBAL_ICON):
@@ -303,16 +311,16 @@ def popup_error(config, language, icon=GLOBAL_ICON):
 
     """
     pass
-    message = config.get(language, '-t_manual_data-')
-    title = config.get(language, '-n_manual_data-')
-    buttons_text = config.get(language, '-b_close-')
-
-    return popup_Ok(config=config,
-                    text=message,
-                    title=title,
-                    buttons_text=buttons_text,
-                    location=(100, 60),
-                    icon=icon)
+    # message = config.get(language, '-t_manual_data-')
+    # title = config.get(language, '-n_manual_data-')
+    # buttons_text = config.get(language, '-b_close-')
+    #
+    # return popup_Ok(config=config,
+    #                 text=message,
+    #                 title=title,
+    #                 buttons_text=buttons_text,
+    #                 location=(100, 60),
+    #                 icon=icon)
 
 
 # ToDo: Если успешно: "Закрыть программу? -> Да / Нет"
@@ -451,7 +459,7 @@ def create_main_layout(config, language):
                    font=('Arial', 12),
                    )
          ],
-    ]
+        ]
 
     return main_layout
 
@@ -474,14 +482,14 @@ def create_main_window(config, language):
     # sg.SetOptions(window_location=(300, 250))
     # Create the Window
     window = sg.Window(
-        title=config.get(language, '-n_main_window-'),
-        layout=create_main_layout(config, language),
-        icon=GLOBAL_ICON,
-        location=(300, 200),
-        # resizable=False,
-        grab_anywhere=True,
-        # size=(1000, 600)
-    )
+            title=config.get(language, '-n_main_window-'),
+            layout=create_main_layout(config, language),
+            icon=GLOBAL_ICON,
+            location=(300, 200),
+            # resizable=False,
+            grab_anywhere=True,
+            # size=(1000, 600)
+            )
 
     return window
 
@@ -514,7 +522,7 @@ def launch_main_window():
             event, values = window.read()
 
         # ToDo: Remove it (it's temporary, for debugs)
-        print(event, values)
+        print('\n', event, values)
 
         # Determine which event was triggered and execute it
 
@@ -541,14 +549,17 @@ def launch_main_window():
                             values=values,
                             config=config,
                             language=language,
-                            icon=GLOBAL_ICON):
+                            icon=GLOBAL_ICON
+                            ):
                 popup_success(config=config,
-                              language=language)
+                              language=language
+                              )
                 print('Successfully')
 
             else:
                 popup_error(config=config,
-                            language=language)
+                            language=language
+                            )
                 print(f'Some error: \nEvent {event} \nValues {values}')
 
             # Unlocking the main window, ready to accept new commands
@@ -617,7 +628,8 @@ def create_files(event, values, config, language, icon):
                                       language=language,
                                       config_key=event,
                                       path_data=path_input_data,
-                                      path_dir=path_output_dir)
+                                      path_dir=path_output_dir
+                                      )
 
     # The key that informs about the success of the function
     result = False
@@ -626,7 +638,8 @@ def create_files(event, values, config, language, icon):
                     title=config.get(language, '-n_sure-'),
                     buttons_text=(config.get(language, '-b_yes-'),
                                   config.get(language, '-b_no-')),
-                    icon=icon):
+                    icon=icon
+                    ):
         if event == '-b_create_UI-':
             make_only_UI(path_input_data, path_output_dir)
             result = True
