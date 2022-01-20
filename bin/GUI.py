@@ -629,7 +629,7 @@ def create_files(event, values, config, language, icon):
                                       language=language,
                                       config_key=event,
                                       path_data=path_input_data,
-                                      path_dir=path_output_dir
+                                      path_dir=path_output_dir,
                                       )
 
     # The key that informs about the success of the function
@@ -654,5 +654,3 @@ def create_files(event, values, config, language, icon):
             make_UI_and_UA(path_input_data, path_output_dir)
 
     return status
-
-

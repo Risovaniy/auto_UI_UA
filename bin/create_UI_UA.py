@@ -585,35 +585,6 @@ def generate_file_UA(df_authors, dir_for_save='', sign_date=''):
                    dir_for_save)
 
 
-#####################################################
-#                                                   #
-#                 LAUNCH BLOCK                      #
-#                                                   #
-#####################################################
-# def try_except_key_error(fn):
-#     """Decorator with the try / except / finally block to catch the error of
-#     incorrect source data so that the program does not shut down urgently
-#
-#     :param fn: File creation function(s)
-#     :type fn: function
-#     :return: Binary value about the success or not of the function execution
-#     :rtype: bool
-#
-#     """
-#     def wrapper(*args, **kwargs):
-#         status = False
-#         try:
-#             result = fn(*args, **kwargs)
-#             status = True
-#         except KeyError as error:
-#             result = error
-#             status = False
-#         finally:
-#             return status, result
-#     return wrapper
-#
-#
-# @try_except_key_error
 def make_UI_and_UA(path_to_authors_data, dir_for_save_file):
     """Launch creating UI and UA
 
@@ -631,7 +602,6 @@ def make_UI_and_UA(path_to_authors_data, dir_for_save_file):
     generate_file_UA(df_in, dir_for_save=dir_for_save_file)
 
 
-@try_except_key_error
 def make_only_UI(path_to_authors_data, dir_for_save_file):
     """Launch creating only UI
 
@@ -648,7 +618,6 @@ def make_only_UI(path_to_authors_data, dir_for_save_file):
     generate_file_UI(df_in, dir_for_save_file)
 
 
-@try_except_key_error
 def make_only_UA(path_to_authors_data, dir_for_save_file):
     """Launch creating only UA
 
