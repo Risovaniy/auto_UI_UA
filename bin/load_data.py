@@ -42,7 +42,9 @@ def extract_extension_from_filename(filename):
 
 
 def load_file_to_df(full_filename, separator=';'):
-    """Loading source data from a file into a DataFrame
+    """Loading source data from a file into a DataFrame, an error is thrown when
+    a failure occurs.
+
     Additional installing for different formats:
     odf  - pip install odfpy
     xls  - pip install xlrd
@@ -53,8 +55,7 @@ def load_file_to_df(full_filename, separator=';'):
     :type full_filename: str
     :param separator: Separator in csv and txt files
     :type separator: str
-    :return: DataFrame with source data about authors.
-     If get an error - "None"
+    :return: DataFrame with source data about authors
     :rtype: pandas.core.frame.DataFrame
 
     """
@@ -77,30 +78,73 @@ def load_file_to_df(full_filename, separator=';'):
             elif extension in csv_extension:
                 return pd.read_csv(full_filename, sep=separator)
 
+            else:
+                raise Exception('Extension_not_supported')
+
         # write_to_log(
         #     f'This file format {extension} ({full_filename}) is not supported',
         #     fn_name='load_file_to_df',
         #     filename='load_data.py',
         #     line_number=57)
-
-        return None
+        else:
+            raise Exception('Extension_incorrectly')
 
     # write_to_log(
     #     f'This file {full_filename} is not exist',
     #     fn_name='load_file_to_df',
     #     filename='load_data.py',
     #     line_number=64)
+    else:
+        raise FileNotFoundError
 
-    return None
+
+def check_input_df_for_UI(input_df):
+    """Check of the necessary columns in the input_df for the UI
+    Required columns:
+    'last_name' :'Фамилия'
+    'first_name': 'Имя'
+    'middle_name': 'Отчество'
+    'job': 'Место работы'
+    'post': 'Должность и ученое звание'
+
+    :param input_df: A DaraFrame with data about authors, newly loaded
+    :type input_df: pandas.core.frame.DataFrame
+    :return: The verdict on the availability of all the necessary columns
+    :rtype: bool
+
+    """
+    pass
+
+
+
+
+def check_input_df_for_UA(input_df):
+    """Check of the necessary columns in the input_df for the UA
+    Required columns
+    'last_name' :'Фамилия'
+    'first_name': 'Имя'
+    'middle_name': 'Отчество'
+    'date_employ': 'Дата трудоустройства'
+    'contract': 'Контракт/Договор'
+    'contribution': 'Творческий вклад'
+
+    :param input_df: A DaraFrame with data about authors, newly loaded
+    :type input_df: pandas.core.frame.DataFrame
+    :return: The verdict on the availability of all the necessary columns
+    :rtype: bool
+
+    """
+    pass
+
+
 
 
 def rename_columns(df_raw):
-    """Renames the columns of the original raw dataframe using a dictionary
+    """Rename the columns of the original raw dataframe using a dictionary
 
     :param df_raw: A DaraFrame with data about authors, newly loaded
     :type df_raw: pandas.core.frame.DataFrame
-    :return: DF with column names that are used in the document creation code.
-    If we get an error - "None"
+    :return: DF with new column names that are used in the documents creating
     :rtype: pandas.core.frame.DataFrame
 
     """
@@ -115,33 +159,10 @@ def rename_columns(df_raw):
                          'Контракт/Договор': 'contract',
                          'Дата трудоустройства': 'date_employ'}
 
-    # Renaming columns with protection from incorrect primary names
-    try:
-        df_renamed_cols = df_raw.rename(dict_for_renaming, axis=1)
 
-        return df_renamed_cols
+    df_renamed_cols = df_raw.rename(dict_for_renaming, axis=1)
 
-    except KeyError as error:
-        print('Столбцы таблицы с исходными данными должны иметь следующие '
-              'названия:\n'
-              'Фамилия\n'
-              'Имя\n'
-              'Отчество\n'
-              'Должность\n'
-              'Место работы\n'
-              'Творческий вклад\n'
-              'Контракт/Договор\n'
-              'Дата трудоустройства\n\n '
-              f'P.S. Порядок колонок не важен.\n\n {error}')
-
-        # write_to_log(
-        #     f'Столбцы в исходных данных имеют некорректные названия '
-        #     f'({df_raw.columns})',
-        #     fn_name='rename_columns',
-        #     filename='load_data.py',
-        #     line_number=112)
-
-        return None
+    return df_renamed_cols
 
 
 def remove_first_last_whitespaces_from_df(df_raw):

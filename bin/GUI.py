@@ -422,6 +422,7 @@ def create_main_layout(config, language):
                       ),
          sg.FolderBrowse(config.get(language, '-b_dir-'),
                          key='-b_browse_dir-',
+                         initial_folder=str(path.Path.home()),
                          size=(150, 40),
                          font=('Arial', 12),
                          ),
@@ -632,7 +633,7 @@ def create_files(event, values, config, language, icon):
                                       )
 
     # The key that informs about the success of the function
-    result = False
+    status = False
     if popup_Yes_No(config=config,
                     text=question,
                     title=config.get(language, '-n_sure-'),
@@ -641,18 +642,17 @@ def create_files(event, values, config, language, icon):
                     icon=icon
                     ):
         if event == '-b_create_UI-':
+            # result =
             make_only_UI(path_input_data, path_output_dir)
-            result = True
-            print('made_UI')
 
         elif event == '-b_create_UA-':
+            # result =
             make_only_UA(path_input_data, path_output_dir)
-            result = True
-            print('made_UA')
 
         elif event == '-b_create_UI_and_UA-':
+            # result =
             make_UI_and_UA(path_input_data, path_output_dir)
-            result = True
-            print('made_UI_and_UA')
 
-    return result
+    return status
+
+
