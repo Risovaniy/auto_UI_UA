@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import sys
 from datetime import datetime
 import locale
 import os
@@ -143,8 +143,8 @@ def create_df_ui(df_authors):
         finish_df['approval'] = 'Не требуется'
 
         return finish_df
-    except KeyError as error:
-        raise error
+    except KeyError:
+        raise sys.exc_info()
 
 
 def create_UI_docx(df_UI, path_dir_to_save):
@@ -245,8 +245,8 @@ def create_df_ua_part1(df_authors):
         finish_df['contribution'] = df_authors['contribution']
 
         return finish_df
-    except KeyError as error:
-        raise error
+    except KeyError:
+        raise sys.exc_info()
 
 
 def generate_text_for_one(df_row, doc, organization):
@@ -448,8 +448,8 @@ def create_df_ua_part2(df_authors):
                             [x[:1] for x in df_authors['middle_name']] + '.'
         return finish_df
 
-    except KeyError as error:
-        raise error
+    except KeyError:
+        raise sys.exc_info()
 
 
 # ToDo Optimize the operation of the program. It seems very slow

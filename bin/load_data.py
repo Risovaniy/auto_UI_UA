@@ -82,15 +82,18 @@ def load_file_to_df(full_filename, separator=';'):
 
             else:
                 # Unsupported a file format
-                raise sys.exc_info()
+                error_info = ('FormatError', extension, 'fn: load_file_to_df; The 2th "if"')
+                raise Exception(error_info)
 
         else:
             # It was not possible to get its extension from the full file path
-            raise sys.exc_info()
+            error_info = ('ExtensionError', extension, 'fn: load_file_to_df; The 1th "if"')
+            raise Exception(error_info)
 
     else:
         # The file specified by this path does not exist
-        raise sys.exc_info()
+        error_info = ('FileNotFoundError', full_filename, 'fn: load_file_to_df; Outside "if"')
+        raise Exception(error_info)
 
 
 def check_input_df_for_UI(input_df):
@@ -112,7 +115,9 @@ def check_input_df_for_UI(input_df):
     necessary_name = {'last_name', 'first_name', 'middle_name', 'job', 'post',
                       'academic'}
     input_names = set(input_df.columns)
-    set(necessary_name).issubset(input_names)
+    if not set(necessary_name).issubset(input_names):
+        error_info = ('', '', '')
+        raise Exception(error_info)
 
 
 
@@ -136,7 +141,9 @@ def check_input_df_for_UA(input_df):
     necessary_name = {'last_name', 'first_name', 'middle_name', 'date_employ',
                       'contract', 'contribution'}
     input_names = set(input_df.columns)
-    set(necessary_name).issubset(input_names)
+    if not set(necessary_name).issubset(input_names):
+        error_info = ('', '', '')
+        raise Exception(error_info)
 
 
 
