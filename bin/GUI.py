@@ -182,7 +182,7 @@ def popup_Ok(config,
             keep_on_top=keep_on_top,
             )
 
-    # Show and read the popup
+    # Show the popup
     window.Show()
 
     # Close the popup
@@ -546,6 +546,8 @@ def launch_main_window():
                 '-b_create_UI-', '-b_create_UA-', '-b_create_UI_and_UA-'):
             # Blocking the main window until a response is received from popup
             window.Disable()
+
+
             if create_files(event=event,
                             values=values,
                             config=config,
@@ -603,6 +605,35 @@ def make_question_for_sure(config, language, config_key, path_data, path_dir):
         replace('$output_path$', path_dir)
 
     return answer
+
+
+def create_files_fault_tolerant(event, values, config, language, icon):
+    """Processing the pressed button and calling the corresponding function
+    for creating documents
+
+    :param event: The key of the current event in the GUI (button key)
+    :type event: str
+    :param values: Dictionary with current interface parameters
+    :type values: dict
+    :param config: A file with configs for the current localization
+    :type config: configparser.ConfigParser
+    :param language: The current localization
+    :type language: str
+    :param icon: The path to the popup icon
+    :type icon: str
+    :return: The key that informs about the success of the function
+    :rtype: bool
+
+    """
+    dict_for_renaming = {'Фамилия': 'last_name',
+                         'Имя': 'first_name',
+                         'Отчество': 'middle_name',
+                         'Должность': 'post',
+                         'Ученое звание': 'academic',
+                         'Место работы': 'job',
+                         'Творческий вклад': 'contribution',
+                         'Контракт/Договор': 'contract',
+                         'Дата трудоустройства': 'date_employ'}
 
 
 def create_files(event, values, config, language, icon):

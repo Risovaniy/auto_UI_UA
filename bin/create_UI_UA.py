@@ -118,25 +118,33 @@ def create_df_ui(df_authors):
     :rtype: pandas.core.frame.DataFrame
 
     """
-    # Initial an empty dataframe create uvedomlenie ispolniteley
-    finish_df = pd.DataFrame()
+    try:
+        # Initial an empty dataframe create uvedomlenie ispolniteley
+        finish_df = pd.DataFrame()
 
-    # Creating the first column "serial number"
-    finish_df['number'] = pd.Series(range(1, len(df_authors) + 1)).astype(str)
+        # Creating the first column "serial number"
+        finish_df['number'] = pd.Series(range(1, len(df_authors) + 1)).astype(str)
 
-    # Creating the full names of authors (ФИО)
-    finish_df['full_name'] = df_authors['last_name'] + '\n' + \
-                             df_authors['first_name'] + '\n' + \
-                             df_authors['middle_name']
+        # Creating the full names of authors (ФИО)
+        finish_df['full_name'] = f"{df_authors['last_name']} \n" \
+                                 f"{df_authors['first_name']} \n" \
+                                 f"{df_authors['middle_name']}"
 
-    # Adding the work_place column in data
-    finish_df['work_place'] = df_authors['job'] + ',\n' + \
-                              df_authors['post']
+        # Adding the work_place column in data
+        if df_authors['academic'] == '':
+            finish_df['work_place'] = f"{df_authors['job']},\n " \
+                                      f"{df_authors['post']}"
+        else:
+            finish_df['work_place'] = f"{df_authors['job']},\n " \
+                                      f"{df_authors['post']},\n" \
+                                      f"{df_authors['academic']}"
 
-    # Creating the approval column by default
-    finish_df['approval'] = 'Не требуется'
+        # Creating the approval column by default
+        finish_df['approval'] = 'Не требуется'
 
-    return finish_df
+        return finish_df
+    except KeyError as error:
+        raise error
 
 
 def create_UI_docx(df_UI, path_dir_to_save):
@@ -197,7 +205,6 @@ def generate_file_UI(df_authors, dir_for_save=''):
 
     """
     # Processing the df_input for table in UI.docx document
-
     df_UI = create_df_ui(df_authors)
 
     # Create UI.docx file with generated table for copying in the main UI
@@ -220,23 +227,26 @@ def create_df_ua_part1(df_authors):
     :rtype: pandas.core.frame.DataFrame
 
     """
-    finish_df = pd.DataFrame()
+    try:
+        finish_df = pd.DataFrame()
 
-    # Full name for the first string
-    finish_df['full_name'] = df_authors['last_name'] + ' ' + \
-                             df_authors['first_name'] + ' ' + \
-                             df_authors['middle_name']
+        # Full name for the first string
+        finish_df['full_name'] = df_authors['last_name'] + ' ' + \
+                                 df_authors['first_name'] + ' ' + \
+                                 df_authors['middle_name']
 
-    # It's a datetime column (employment contract or not)
-    finish_df['date_employ'] = pd.to_datetime(df_authors['date_employ'])
+        # It's a datetime column (employment contract or not)
+        finish_df['date_employ'] = pd.to_datetime(df_authors['date_employ'])
 
-    # Name and number of contract
-    finish_df['contract'] = df_authors['contract']
+        # Name and number of contract
+        finish_df['contract'] = df_authors['contract']
 
-    # Contribution of each authors in the total result
-    finish_df['contribution'] = df_authors['contribution']
+        # Contribution of each authors in the total result
+        finish_df['contribution'] = df_authors['contribution']
 
-    return finish_df
+        return finish_df
+    except KeyError as error:
+        raise error
 
 
 def generate_text_for_one(df_row, doc, organization):
@@ -431,12 +441,15 @@ def create_df_ua_part2(df_authors):
 
     """
     # Initial an empty dataframe create UI
-    finish_df = pd.DataFrame()
-    finish_df['name'] = df_authors['last_name'] + ' ' + \
-                        [x[:1] for x in df_authors['first_name']] + '.' + \
-                        [x[:1] for x in df_authors['middle_name']] + '.'
+    try:
+        finish_df = pd.DataFrame()
+        finish_df['name'] = df_authors['last_name'] + ' ' + \
+                            [x[:1] for x in df_authors['first_name']] + '.' + \
+                            [x[:1] for x in df_authors['middle_name']] + '.'
+        return finish_df
 
-    return finish_df
+    except KeyError as error:
+        raise error
 
 
 # ToDo Optimize the operation of the program. It seems very slow

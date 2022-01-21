@@ -3,6 +3,8 @@
 """Loading source data into a dataframe about authors and initial preprocessing
 of this dataframe"""
 import re
+import sys
+
 import pandas as pd
 import os.path
 from pandas_ods_reader import read_ods
@@ -79,33 +81,27 @@ def load_file_to_df(full_filename, separator=';'):
                 return pd.read_csv(full_filename, sep=separator)
 
             else:
-                raise Exception('Extension_not_supported')
+                # Unsupported a file format
+                raise sys.exc_info()
 
-        # write_to_log(
-        #     f'This file format {extension} ({full_filename}) is not supported',
-        #     fn_name='load_file_to_df',
-        #     filename='load_data.py',
-        #     line_number=57)
         else:
-            raise Exception('Extension_incorrectly')
+            # It was not possible to get its extension from the full file path
+            raise sys.exc_info()
 
-    # write_to_log(
-    #     f'This file {full_filename} is not exist',
-    #     fn_name='load_file_to_df',
-    #     filename='load_data.py',
-    #     line_number=64)
     else:
-        raise FileNotFoundError
+        # The file specified by this path does not exist
+        raise sys.exc_info()
 
 
 def check_input_df_for_UI(input_df):
     """Check of the necessary columns in the input_df for the UI
     Required columns:
-    'last_name' :'Фамилия'
+    'last_name': 'Фамилия'
     'first_name': 'Имя'
     'middle_name': 'Отчество'
     'job': 'Место работы'
-    'post': 'Должность и ученое звание'
+    'post': 'Должность'
+    'academic': 'Ученое звание'
 
     :param input_df: A DaraFrame with data about authors, newly loaded
     :type input_df: pandas.core.frame.DataFrame
@@ -113,7 +109,10 @@ def check_input_df_for_UI(input_df):
     :rtype: bool
 
     """
-    pass
+    necessary_name = {'last_name', 'first_name', 'middle_name', 'job', 'post',
+                      'academic'}
+    input_names = set(input_df.columns)
+    set(necessary_name).issubset(input_names)
 
 
 
@@ -121,7 +120,7 @@ def check_input_df_for_UI(input_df):
 def check_input_df_for_UA(input_df):
     """Check of the necessary columns in the input_df for the UA
     Required columns
-    'last_name' :'Фамилия'
+    'last_name': 'Фамилия'
     'first_name': 'Имя'
     'middle_name': 'Отчество'
     'date_employ': 'Дата трудоустройства'
@@ -134,8 +133,10 @@ def check_input_df_for_UA(input_df):
     :rtype: bool
 
     """
-    pass
-
+    necessary_name = {'last_name', 'first_name', 'middle_name', 'date_employ',
+                      'contract', 'contribution'}
+    input_names = set(input_df.columns)
+    set(necessary_name).issubset(input_names)
 
 
 
@@ -153,12 +154,12 @@ def rename_columns(df_raw):
     dict_for_renaming = {'Фамилия': 'last_name',
                          'Имя': 'first_name',
                          'Отчество': 'middle_name',
-                         'Должность и ученое звание': 'post',
+                         'Должность': 'post',
+                         'Ученое звание': 'academic',
                          'Место работы': 'job',
                          'Творческий вклад': 'contribution',
                          'Контракт/Договор': 'contract',
                          'Дата трудоустройства': 'date_employ'}
-
 
     df_renamed_cols = df_raw.rename(dict_for_renaming, axis=1)
 
