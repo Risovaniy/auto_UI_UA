@@ -96,57 +96,6 @@ def load_file_to_df(full_filename, separator=';'):
         raise Exception(error_info)
 
 
-def check_input_df_for_UI(input_df):
-    """Check of the necessary columns in the input_df for the UI
-    Required columns:
-    'last_name': 'Фамилия'
-    'first_name': 'Имя'
-    'middle_name': 'Отчество'
-    'job': 'Место работы'
-    'post': 'Должность'
-    'academic': 'Ученое звание'
-
-    :param input_df: A DaraFrame with data about authors, newly loaded
-    :type input_df: pandas.core.frame.DataFrame
-    :return: The verdict on the availability of all the necessary columns
-    :rtype: bool
-
-    """
-    necessary_name = {'last_name', 'first_name', 'middle_name', 'job', 'post',
-                      'academic'}
-    input_names = set(input_df.columns)
-    if not set(necessary_name).issubset(input_names):
-        error_info = ('', '', '')
-        raise Exception(error_info)
-
-
-
-
-def check_input_df_for_UA(input_df):
-    """Check of the necessary columns in the input_df for the UA
-    Required columns
-    'last_name': 'Фамилия'
-    'first_name': 'Имя'
-    'middle_name': 'Отчество'
-    'date_employ': 'Дата трудоустройства'
-    'contract': 'Контракт/Договор'
-    'contribution': 'Творческий вклад'
-
-    :param input_df: A DaraFrame with data about authors, newly loaded
-    :type input_df: pandas.core.frame.DataFrame
-    :return: The verdict on the availability of all the necessary columns
-    :rtype: bool
-
-    """
-    necessary_name = {'last_name', 'first_name', 'middle_name', 'date_employ',
-                      'contract', 'contribution'}
-    input_names = set(input_df.columns)
-    if not set(necessary_name).issubset(input_names):
-        error_info = ('', '', '')
-        raise Exception(error_info)
-
-
-
 def rename_columns(df_raw):
     """Rename the columns of the original raw dataframe using a dictionary
 
