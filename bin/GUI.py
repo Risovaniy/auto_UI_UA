@@ -562,10 +562,14 @@ def make_question_for_sure(config_key, path_data, path_dir):
 
 
 def error_processing_col_names(type_err, err, object_id):
-    """Translating errors from file creation into clear correction instructions
+    """Key error handling, most often incorrect source data
 
-    :param error: Tuple with error information (TypeError, KeyError, ObjectID)
-    :type error: tuple
+    :param type_err: Name of the error type
+    :type type_err: str
+    :param err: The error itself
+    :type err: str
+    :param object_id: ID of the object where the error occurred
+    :type object_id: str
     :return: Information about the error and how to fix it
     :rtype: str
 
@@ -604,8 +608,13 @@ def error_processing(error):
           f"err {err}\n"
           f"object_id {object_id}\n")
 
+    if type_err == 'KeyError':
+        return error_processing_col_names(type_err, err, object_id)
 
-def create_files_fault_tolerant(event, values, icon):
+    if type_err ==
+
+
+def create_files_fault_tolerant(event, values):
     """Processing the pressed button and calling the corresponding function
     for creating documents
 
@@ -613,31 +622,19 @@ def create_files_fault_tolerant(event, values, icon):
     :type event: str
     :param values: Dictionary with current interface parameters
     :type values: dict
-    :param icon: The path to the popup icon
-    :type icon: str
     :return: The key that informs about the success of the function
     :rtype: bool
 
     """
-    dict_for_renaming = {'Фамилия': 'last_name',
-                         'Имя': 'first_name',
-                         'Отчество': 'middle_name',
-                         'Должность': 'post',
-                         'Ученое звание': 'academic',
-                         'Место работы': 'job',
-                         'Творческий вклад': 'contribution',
-                         'Контракт/Договор': 'contract',
-                         'Дата трудоустройства': 'date_employ'}
-
     # Catching errors when generating files (the basis is incorrect source data)
     try:
-        create_files(event, values, icon)
+        create_files(event, values)
         return True
     except:
         return error_processing(sys.exc_info())
 
 
-def create_files(event, values, icon):
+def create_files(event, values):
     """Processing the pressed button and calling the corresponding function
     for creating documents
 
@@ -645,8 +642,6 @@ def create_files(event, values, icon):
     :type event: str
     :param values: Dictionary with current interface parameters
     :type values: dict
-    :param icon: The path to the popup icon
-    :type icon: str
     :return: The function just either creates files or causes an error
     :rtype: None
 
@@ -663,7 +658,6 @@ def create_files(event, values, icon):
                     title=CONFIG.get(LANGUAGE, '-n_sure-'),
                     buttons_text=(CONFIG.get(LANGUAGE, '-b_yes-'),
                                   CONFIG.get(LANGUAGE, '-b_no-')),
-                    icon=icon
                     ):
         if event == '-b_create_UI-':
             make_only_UI(path_input_data, path_output_dir)
