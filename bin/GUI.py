@@ -556,11 +556,12 @@ def make_question_for_sure(config_key, path_data, path_dir):
     # Transformation of the key to get the text of the question, not the buttons
     config_key = config_key.replace('-b_create_', '-t_sure_')
 
-    answer = CONFIG.get(LANGUAGE, config_key). \
+    # Add contextual data of the current session of the program to the question
+    question = CONFIG.get(LANGUAGE, config_key). \
         replace('$input_path$', path_data). \
         replace('$output_path$', path_dir)
 
-    return answer
+    return question
 
 
 def error_processing_col_names(type_err, err, object_id):
