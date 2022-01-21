@@ -87,7 +87,7 @@ def load_file_to_df(full_filename, separator=';'):
 
         else:
             # It was not possible to get its extension from the full file path
-            error_info = ('ExtensionError', extension, 'fn: load_file_to_df; The 1th "if"')
+            error_info = ('ExtensionError', full_filename, 'fn: load_file_to_df; The 1th "if"')
             raise Exception(error_info)
 
     else:
