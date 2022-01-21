@@ -512,8 +512,7 @@ def launch_main_window():
             # Blocking the main window until a response is received from popup
             window.Disable()
             status = create_files_fault_tolerant(event=event,
-                                                 values=values,
-                                                 icon=GLOBAL_ICON
+                                                 values=values
                                                  )
 
             if status is True:
@@ -554,6 +553,9 @@ def make_question_for_sure(config_key, path_data, path_dir):
     :rtype: str
 
     """
+    # Transformation of the key to get the text of the question, not the buttons
+    config_key = config_key.replace('-b_create_', '-t_sure_')
+
     answer = CONFIG.get(LANGUAGE, config_key). \
         replace('$input_path$', path_data). \
         replace('$output_path$', path_dir)
@@ -611,7 +613,7 @@ def error_processing(error):
     if type_err == 'KeyError':
         return error_processing_col_names(type_err, err, object_id)
 
-    if type_err ==
+    # if type_err ==
 
 
 def create_files_fault_tolerant(event, values):
