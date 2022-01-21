@@ -46,7 +46,7 @@ def popup_Yes_No(text='Just text',
                  font=('Arial', 14),
                  grab_anywhere=True,
                  keep_on_top=True,
-                 location=(600, 400)
+                 # location=(600, 400)
                  ):
     """Displays a confirmation pop-up window, the names of the buttons can be changed
 
@@ -101,7 +101,7 @@ def popup_Yes_No(text='Just text',
         title=title,
         layout=layout,
         icon=icon,
-        location=location,
+        # location=location,
         resizable=False,
         grab_anywhere=grab_anywhere,
         keep_on_top=keep_on_top,
@@ -124,7 +124,7 @@ def popup_Ok(text='',
              font=('Arial', 14),
              grab_anywhere=True,
              keep_on_top=True,
-             location=(600, 400)
+             # location=(600, 400)
              ):
     """Displays a confirmation pop-up window, with a changeable button name
 
@@ -176,7 +176,7 @@ def popup_Ok(text='',
         title=title,
         layout=layout,
         icon=icon,
-        location=location,
+        # location=location,
         resizable=False,
         grab_anywhere=grab_anywhere,
         keep_on_top=keep_on_top,
@@ -196,7 +196,7 @@ def popup_close(buttons_size=(70, 40),
                 font=('Arial', 18),
                 grab_anywhere=True,
                 keep_on_top=True,
-                location=(600, 400),
+                # location=(600, 400),
                 ):
     """Displays a pop-up window confirming the intention to close the program
 
@@ -231,7 +231,7 @@ def popup_close(buttons_size=(70, 40),
                         font=font,
                         grab_anywhere=grab_anywhere,
                         keep_on_top=keep_on_top,
-                        location=location
+                        # location=location
                         )
 
 
@@ -251,7 +251,7 @@ def show_manual_work_program(icon=GLOBAL_ICON):
     return popup_Ok(text=message,
                     title=title,
                     buttons_text=buttons_text,
-                    location=(100, 60),
+                    # location=(100, 60),
                     icon=icon
                     )
 
@@ -273,33 +273,30 @@ def show_manual_input_data(icon=GLOBAL_ICON):
     return popup_Ok(text=message,
                     title=title,
                     buttons_text=buttons_text,
-                    location=(100, 60),
+                    # location=(100, 110),
                     icon=icon
                     )
 
 
-def popup_error(status, icon=GLOBAL_ICON):
+def popup_error(error_raport, icon=GLOBAL_ICON):
     """Show a popup signaling that an error has occurred during the execution
     of the program, and calling for a restart
 
-    :param status: Error information for informing the user what to fix for him
-    :type status: tuple
+    :param error_raport: Ready error report to display on the screen in popup
+    :type error_raport: str
     :param icon: The path to the popup icon
     :type icon: str
-    :return: The window with the message can only be closed
+    :return: Popup with error report, popup can only be closed
     :rtype: None
 
     """
-    pass
-    # message = CONFIG.get(LANGUAGE, '-t_manual_data-')
-    # title = CONFIG.get(LANGUAGE, '-n_manual_data-')
-    # buttons_text = CONFIG.get(LANGUAGE, '-b_close-')
-    #
-    # return popup_Ok(text=message,
-    #                 title=title,
-    #                 buttons_text=buttons_text,
-    #                 location=(100, 60),
-    #                 icon=icon)
+    title = CONFIG.get(LANGUAGE, '-n_popup_error-')
+    buttons_text = CONFIG.get(LANGUAGE, '-b_close-')
+
+    return popup_Ok(text=error_raport,
+                    title=title,
+                    buttons_text=buttons_text,
+                    icon=icon)
 
 
 # ToDo: Если успешно: "Закрыть программу? -> Да / Нет"
@@ -453,7 +450,7 @@ def create_main_window():
         title=CONFIG.get(LANGUAGE, '-n_main_window-'),
         layout=create_main_layout(),
         icon=GLOBAL_ICON,
-        location=(300, 200),
+        # location=(300, 200),
         # resizable=False,
         grab_anywhere=True,
         # size=(1000, 600)
@@ -511,15 +508,22 @@ def launch_main_window():
                 '-b_create_UI-', '-b_create_UA-', '-b_create_UI_and_UA-'):
             # Blocking the main window until a response is received from popup
             window.Disable()
-            status = create_files_fault_tolerant(event=event,
-                                                 values=values
-                                                 )
 
-            if status is True:
+            # Fill the input path with the home directory if the field is empty
+            if values['-input_path-'] == '':
+                values['-input_path-'] = str(path.Path.home())
+
+            # Fill the output path with the home directory if the field is empty
+            if values['-output_path-'] == '':
+                values['-output_path-'] = str(path.Path.home())
+
+            error = create_files_fault_tolerant(event=event, values=values)
+
+            if not error:
                 popup_success()
 
             else:
-                popup_error(status=status)
+                popup_error(error_raport=error)
                 print(f'Some error: \nEvent {event} \nValues {values}')
 
             # Unlocking the main window, ready to accept new commands
@@ -595,26 +599,50 @@ def error_processing_col_names(type_err, err, object_id):
 
     # In case the KeyError got out not from the column names
     else:
-        message = CONFIG.get(LANGUAGE, '-t_error_ErrorKey-'). \
+        message = CONFIG.get(LANGUAGE, '-t_error-'). \
             replace('$TypeError$', type_err). \
             replace('$Error$', err). \
             replace('$ObjectID$', object_id)
         return message
 
 
-def error_processing(error):
-    type_err = error[0]
-    err = error[1]
-    object_id = error[2]
-    print(f"type(error) {type(error)}\n"
-          f"type_err {type_err}\n"
-          f"err {err}\n"
-          f"object_id {object_id}\n")
+def error_processing():
+    """Error handling of any type and formation of correction information
 
-    if type_err == 'KeyError':
+    :param error: Tuple with error information ('TypeError', 'Error', 'ObjectID')
+    :type error: tuple
+    :return: Error report text to output to popup
+    :rtype: str
+
+    """
+    type_err = sys.exc_info()[0]
+    err = sys.exc_info()[1]
+    object_id = sys.exc_info()[2]
+
+    if type_err == KeyError:
         return error_processing_col_names(type_err, err, object_id)
 
-    # if type_err ==
+    elif type_err == Exception:
+        print(f'type_err\t{type_err}\nerr\t{err}\nsys.exc_info()\t{sys.exc_info()}')
+        type_err = err[0]
+        # object_id = err[2]
+        # err = err[1]
+
+        if type_err == 'FormatError':
+            return CONFIG.get(LANGUAGE, '-t_error_FormatError-')
+
+        elif type_err == 'ExtensionError':
+            return CONFIG.get(LANGUAGE, '-t_error_ExtensionError-')
+
+        elif type_err == 'FileNotFoundError':
+            return CONFIG.get(LANGUAGE, '-t_error_FileNotFoundError-')
+
+    else:
+        message = CONFIG.get(LANGUAGE, '-t_error-'). \
+            replace('$TypeError$', type_err). \
+            replace('$Error$', err). \
+            replace('$ObjectID$', object_id)
+        return message
 
 
 def create_files_fault_tolerant(event, values):
@@ -625,16 +653,17 @@ def create_files_fault_tolerant(event, values):
     :type event: str
     :param values: Dictionary with current interface parameters
     :type values: dict
-    :return: The key that informs about the success of the function
-    :rtype: bool
+    :return: Error report text to output to popup
+    :rtype: str
 
     """
     # Catching errors when generating files (the basis is incorrect source data)
     try:
         create_files(event, values)
-        return True
-    except:
-        return error_processing(sys.exc_info())
+        return None
+
+    except Exception:
+        return error_processing()
 
 
 def create_files(event, values):
