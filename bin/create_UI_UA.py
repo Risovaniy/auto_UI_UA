@@ -144,7 +144,7 @@ def create_df_ui(df_authors):
 
         return finish_df
     except KeyError:
-        raise KeyError
+        raise KeyError(sys.exc_info())
 
 
 def create_UI_docx(df_UI, path_dir_to_save):
@@ -246,7 +246,7 @@ def create_df_ua_part1(df_authors):
 
         return finish_df
     except KeyError:
-        raise KeyError
+        raise KeyError(sys.exc_info())
 
 
 def generate_text_for_one(df_row, doc, organization):
@@ -449,7 +449,7 @@ def create_df_ua_part2(df_authors):
         return finish_df
 
     except KeyError:
-        raise KeyError
+        raise KeyError(sys.exc_info())
 
 
 # ToDo Optimize the operation of the program. It seems very slow

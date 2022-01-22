@@ -591,9 +591,27 @@ def error_processing_col_names(type_err, err, object_id):
                           'contribution': 'Творческий вклад',
                           'contract': 'Контракт/Договор',
                           'date_employ': 'Дата трудоустройства'}
+    err_args = err.args[0]
+    type_err = str(err_args[0])
+    # Remove ', else we have keys like "'job'"
+    err = str(err_args[1])[1:-1]
+    object_id = err_args[2]
+
+########## Не работает сравнение ошибки со словарем !!!!!!!!!!!!!!!!!!!!!!!!!!
+    # print(f'\n{"#" * 30}error_processing_col_names\n'
+    #       f'err_args\t{err_args}\t\t{type(err_args)}\n'
+    #       f'type_err\t{type_err}\t\t{type(type_err)}\n'
+    #       f'err\t{err}\t\t{type(err)}\n'
+    #       f'object_id\t{object_id}\t\t{type(object_id)}\n{"#" * 30}\n'
+    #       f'err in dict_for_translate\t{err in dict_for_translate}\n'
+    #       f'{err in str(dict_for_translate)}\n'
+    #       f'{err in list(dict_for_translate)}\n'
+    #       f'{err in set(dict_for_translate)}\n'
+    #       f'dict_for_translate.keys()\t{dict_for_translate}\t\t{type(dict_for_translate)}\n'
+    #       )
 
     # Error handling of column names in source data
-    if err in dict_for_translate.keys():
+    if err in dict_for_translate:
         message = CONFIG.get(LANGUAGE, '-t_error_ErrorKey-'). \
             replace('$ErrorKey$', dict_for_translate[err])
         return message
@@ -601,9 +619,9 @@ def error_processing_col_names(type_err, err, object_id):
     # In case the KeyError got out not from the column names
     else:
         message = CONFIG.get(LANGUAGE, '-t_error-'). \
-            replace('$TypeError$', type_err). \
-            replace('$Error$', err). \
-            replace('$ObjectID$', object_id)
+            replace('$TypeError$', str(type_err)). \
+            replace('$Error$', str(err)). \
+            replace('$ObjectID$', str(object_id))
         return message
 
 
