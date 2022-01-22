@@ -115,6 +115,7 @@ def rename_columns(df_raw):
                          'Место работы': 'job',
                          'Творческий вклад': 'contribution',
                          'Контракт/Договор': 'contract',
+                         'Дата подписания УА': 'date_UA',
                          'Дата трудоустройства': 'date_employ'}
 
     df_renamed_cols = df_raw.rename(dict_for_renaming, axis=1)

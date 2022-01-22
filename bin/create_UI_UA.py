@@ -190,7 +190,7 @@ def create_UI_docx(df_UI, path_dir_to_save):
 
     # Save the newly created file in .docx format
     created_date = datetime.now().strftime('(%Y-%m-%d_%H-%M)')
-    doc.save(f"{path_dir_to_save}{os.sep}table_for_UI__{created_date}.docx")
+    doc.save(f"{path_dir_to_save}{os.sep}UI__{created_date}.docx")
 
 
 def generate_file_UI(df_authors, dir_for_save=''):
@@ -446,6 +446,7 @@ def create_df_ua_part2(df_authors):
         finish_df['name'] = df_authors['last_name'] + ' ' + \
                             [x[:1] for x in df_authors['first_name']] + '.' + \
                             [x[:1] for x in df_authors['middle_name']] + '.'
+        finish_df['date_UA'] = df_authors['date_UA']
         return finish_df
 
     except KeyError:
@@ -514,7 +515,7 @@ def create_UA_docx(doc, df_UA, signature_date, path_dir_to_save):
             cell_1.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
             run_1 = cell_1.paragraphs[0].add_run()
             # Filling a cell with text
-            run_1.text = df_UA.iloc[int(row / 3)]
+            run_1.text = df_UA['name'].iloc[int(row / 3)]
             # Make underline at the name of an author
             run_1.font.underline = True
 
@@ -522,8 +523,7 @@ def create_UA_docx(doc, df_UA, signature_date, path_dir_to_save):
             cell_2.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
             run_2 = cell_2.paragraphs[0].add_run()
             # Filling a cell with text
-
-            run_2.text = signature_date
+            run_2.text = create_sign_date(date=df_UA['date_UA'].iloc[int(row / 3)])
 
         elif (row + 1) % 3 == 2:
 
@@ -543,8 +543,8 @@ def create_UA_docx(doc, df_UA, signature_date, path_dir_to_save):
             run_1.font.size = font_size_hint
 
     # Save the newly created file in .docx format
-    created_date = datetime.now().strftime('(%Y-%m-%d_%H-%M)')
-    doc.save(f"{path_dir_to_save}{os.sep}data_for_UA__{created_date}.docx")
+    created_date = datetime.now().strftime('(%d-%m-%Y_%H-%M)')
+    doc.save(f"{path_dir_to_save}{os.sep}UA__{created_date}.docx")
 
 
 # ToDo: Файлы в betta версии нормально закоммитить и сделать норм шириину строк
@@ -564,12 +564,10 @@ def create_sign_date(date=''):
     if not date:
         date = datetime.now()
     else:
-        dateFormatter = "%Y.%m.%d"
+        dateFormatter = "%d.%m.%Y"
         date = datetime.strptime(date, dateFormatter)
 
-    sign_date = f'Дата: «{date.strftime("%d")}» ' \
-                f'{date.strftime("%B").lower()} ' \
-                f'{date.year}г.'
+    sign_date = f'Дата: «{date.day}» {date.month} {date.year}г.'
 
     return sign_date
 
