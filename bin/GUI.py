@@ -451,7 +451,7 @@ def create_main_window():
             title=CONFIG.get(LANGUAGE, '-n_main_window-'),
             layout=create_main_layout(),
             icon=GLOBAL_ICON,
-            # location=(300, 200),
+            location=(300, 200),
             # resizable=False,
             grab_anywhere=True,
             # size=(1000, 600)
@@ -684,7 +684,8 @@ def create_files(event, values):
 
     # The key that informs about the success of the function
     if popup_Yes_No(text=question,
-                    title=CONFIG.get(LANGUAGE, '-n_sure-'),
+                    title=CONFIG.get(LANGUAGE,
+                                     str(event).replace('-b_create_', '-n_sure_')),
                     buttons_text=(CONFIG.get(LANGUAGE, '-b_yes-'),
                                   CONFIG.get(LANGUAGE, '-b_no-')),
                     ):
