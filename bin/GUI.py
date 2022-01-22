@@ -43,8 +43,8 @@ def popup_Yes_No(text='Just text',
                  buttons_text=('Button Yes', 'Button No'),
                  buttons_size=(70, 40),
                  icon=GLOBAL_ICON,
-                 font=('Arial', 14),
-                 grab_anywhere=True,
+                 font=('Arial', 16),
+                 grab_anywhere=False,
                  keep_on_top=True,
                  location=(600, 400)
                  ):
@@ -87,7 +87,7 @@ def popup_Yes_No(text='Just text',
         [sg.Stretch(),
          sg.Button(button_text=buttons_text[0],
                    size=buttons_size,
-                   font=font
+                   font=font,
                    ),
          sg.Button(button_text=buttons_text[1],
                    size=buttons_size,
@@ -97,21 +97,20 @@ def popup_Yes_No(text='Just text',
         ]
 
     # Create the popup
-    window = sg.Window(
-            title=title,
-            layout=layout,
-            icon=icon,
-            location=location,
-            resizable=False,
-            grab_anywhere=grab_anywhere,
-            keep_on_top=keep_on_top,
-            )
+    window_Yes_No = sg.Window(title=title,
+                              layout=layout,
+                              icon=icon,
+                              location=location,
+                              resizable=False,
+                              grab_anywhere=grab_anywhere,
+                              keep_on_top=keep_on_top,
+                              )
 
     # Show and read the popup
-    event, values = window.Show()
+    event, values = window_Yes_No.Show()
 
     # Close the popup
-    window.Close()
+    window_Yes_No.Close()
 
     return True if event == buttons_text[0] else False
 
@@ -121,8 +120,8 @@ def popup_Ok(text='',
              buttons_text='Ok',
              buttons_size=(150, 40),
              icon=GLOBAL_ICON,
-             font=('Arial', 14),
-             grab_anywhere=True,
+             font=('Arial', 16),
+             grab_anywhere=False,
              keep_on_top=True,
              location=(600, 400)
              ):
@@ -164,15 +163,14 @@ def popup_Ok(text='',
 
         [sg.Stretch(),
          sg.Button(button_text=buttons_text,
-                   # auto_size_button=True ,
                    size=buttons_size,
-                   font=font
+                   font=font,
                    )
          ]
         ]
 
     # Create the popup
-    window = sg.Window(
+    window_Ok = sg.Window(
             title=title,
             layout=layout,
             icon=icon,
@@ -183,17 +181,17 @@ def popup_Ok(text='',
             )
 
     # Show the popup
-    window.Show()
+    window_Ok.Show()
 
     # Close the popup
-    window.Close()
+    window_Ok.Close()
 
     return None
 
 
 def popup_close(buttons_size=(70, 40),
                 icon=GLOBAL_ICON,
-                font=('Arial', 18),
+                font=('Arial', 16),
                 grab_anywhere=True,
                 keep_on_top=True,
                 location=(600, 400),
@@ -235,7 +233,84 @@ def popup_close(buttons_size=(70, 40),
                         )
 
 
-def show_manual_work_program(icon=GLOBAL_ICON):
+def popup_long_text(text='',
+                    title='Main title',
+                    button_text='Ok',
+                    button_size=(150, 40),
+                    icon=GLOBAL_ICON,
+                    font=('Arial', 16),
+                    grab_anywhere=True,
+                    keep_on_top=True,
+                    location=(600, 400)
+                    ):
+    """Display a popup for a long text (browser text)
+
+    :param text: The long text for showing
+    :type text: str
+    :param title: Title of the popup window
+    :type title: str
+    :param button_text: The name of the button, usually "close"
+    :type button_text: str
+    :param button_size: Tuple of button sizes in pixels (width, height)
+    :type button_size: tuple
+    :param icon: The path to the popup icon
+    :type icon: str
+    :param font: A tuple with the characteristics of the text (size, outline, etc.)
+    :type font: tuple
+    :param grab_anywhere: Is it possible to move the window with a grip anywhere
+    :type grab_anywhere: bool
+    :param keep_on_top: Whether to support a window from above
+    :type keep_on_top: bool
+    :param location: Coordinates of the window appearance (centered if 1 screen)
+    :type location: tuple
+    :return: The window is informational (often manuals), it can only be closed
+    :rtype: None
+
+    """
+    # Add a theme
+    sg.ChangeLookAndFeel(CONFIG.get('THEMES', "-theme_popup-"))
+
+    # Create the layout for popup
+    layout = [
+        [sg.Multiline(default_text=text,
+                      font=font,
+                      background_color='white',
+                      change_submits=True,
+                      enable_events=True,
+                      )],
+
+        [sg.Text(size=(600, 20))],
+
+        [sg.Stretch(),
+         sg.Button(button_text=button_text,
+                   # auto_size_button=True ,
+                   size=button_size,
+                   font=font
+                   )
+         ]]
+
+    # Create the popup
+    window = sg.Window(
+            title=title,
+            layout=layout,
+            icon=icon,
+            location=location,
+            resizable=True,
+            grab_anywhere=grab_anywhere,
+            keep_on_top=keep_on_top,
+            size=(600, 400),
+            )
+
+    # Show the popup
+    window.Show()
+
+    # Close the popup
+    window.Close()
+
+    return None
+
+
+def show_manual_work_program():
     """Show a popup with a guide to working in the program
     (without blocking the main window)
 
@@ -247,16 +322,18 @@ def show_manual_work_program(icon=GLOBAL_ICON):
     """
     message = CONFIG.get(LANGUAGE, '-t_manual_prog-')
     title = CONFIG.get(LANGUAGE, '-n_manual_prog-')
-    buttons_text = CONFIG.get(LANGUAGE, '-b_close-')
-    return popup_Ok(text=message,
-                    title=title,
-                    buttons_text=buttons_text,
-                    location=(100, 60),
-                    icon=icon
-                    )
+    button_text = CONFIG.get(LANGUAGE, '-b_close-')
+    icon = GLOBAL_ICON
+
+    return popup_long_text(text=message,
+                           title=title,
+                           button_text=button_text,
+                           # location=(100, 60),
+                           icon=icon,
+                           )
 
 
-def show_manual_input_data(icon=GLOBAL_ICON):
+def show_manual_input_data():
     """Show a popup with a guide to filling out a table with data about authors
     (without blocking the main window)
 
@@ -268,14 +345,15 @@ def show_manual_input_data(icon=GLOBAL_ICON):
     """
     message = CONFIG.get(LANGUAGE, '-t_manual_data-')
     title = CONFIG.get(LANGUAGE, '-n_manual_data-')
-    buttons_text = CONFIG.get(LANGUAGE, '-b_close-')
+    button_text = CONFIG.get(LANGUAGE, '-b_close-')
+    icon = GLOBAL_ICON
 
-    return popup_Ok(text=message,
-                    title=title,
-                    buttons_text=buttons_text,
-                    # location=(100, 110),
-                    icon=icon
-                    )
+    return popup_long_text(text=message,
+                           title=title,
+                           button_text=button_text,
+                           # location=(100, 110),
+                           icon=icon
+                           )
 
 
 def popup_error(error_raport, icon=GLOBAL_ICON):
@@ -301,16 +379,40 @@ def popup_error(error_raport, icon=GLOBAL_ICON):
 
 
 # ToDo: Если успешно: "Закрыть программу? -> Да / Нет"
-def popup_success(icon=GLOBAL_ICON):
+def popup_success(buttons_size=(70, 40),
+                  grab_anywhere=True,
+                  ):
     """Show a window signaling the successful completion of the program
 
+    :param buttons_size: Tuple of button sizes in pixels (width, height)
+    :type buttons_size: tuple
     :param icon: The path to the popup icon
     :type icon: str
-    :return: The window with the message can only be closed
-    :rtype: None
+    :param font: A tuple with the characteristics of the text (size, outline, etc.)
+    :type font: tuple
+    :param grab_anywhere: Is it possible to move the window with a grip anywhere
+    :type grab_anywhere: bool
+    :param keep_on_top: Whether to support a window from above
+    :type keep_on_top: bool
+    :param location: Coordinates of the window appearance (centered if 1 screen)
+    :type location: tuple
+    :return: Logical value to close or not the program
+    :rtype: bool
 
     """
-    pass
+    title = CONFIG.get(LANGUAGE, '-n_pop_close-')
+
+    text = CONFIG.get(LANGUAGE, '-t_successful-')
+
+    b_text_yes = CONFIG.get(LANGUAGE, '-b_yes-')
+    b_text_no = CONFIG.get(LANGUAGE, '-b_no-')
+
+    return popup_Yes_No(text=text,
+                        title=title,
+                        buttons_text=(b_text_yes, b_text_no),
+                        buttons_size=buttons_size,
+                        grab_anywhere=grab_anywhere,
+                        )
 
 
 def create_main_layout():
@@ -521,7 +623,8 @@ def launch_main_window():
             error = create_files_fault_tolerant(event=event, values=values)
 
             if not error:
-                popup_success()
+                if popup_success():
+                    break
 
             else:
                 popup_error(error_raport=error)
@@ -586,6 +689,7 @@ def error_processing_col_names(err):
                           'job': 'Место работы',
                           'contribution': 'Творческий вклад',
                           'contract': 'Контракт/Договор',
+                          'date_UA': 'Дата подписания УА',
                           'date_employ': 'Дата трудоустройства'}
     # Remove "'", else we have keys like "'job'"
     err = str(err.args[0][1])[1:-1]
@@ -602,8 +706,7 @@ def error_processing_col_names(err):
         object_id = err.args[0][2]
         message = CONFIG.get(LANGUAGE, '-t_error-'). \
             replace('$TypeError$', str(type_err)). \
-            replace('$Error$', str(err)). \
-            replace('$ObjectID$', str(object_id))
+            replace('$Error$', str(err))
         return message
 
 
@@ -685,7 +788,8 @@ def create_files(event, values):
     # The key that informs about the success of the function
     if popup_Yes_No(text=question,
                     title=CONFIG.get(LANGUAGE,
-                                     str(event).replace('-b_create_', '-n_sure_')),
+                                     str(event).replace('-b_create_', '-n_sure_')
+                                     ),
                     buttons_text=(CONFIG.get(LANGUAGE, '-b_yes-'),
                                   CONFIG.get(LANGUAGE, '-b_no-')),
                     ):
