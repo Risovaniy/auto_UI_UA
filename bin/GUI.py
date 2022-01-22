@@ -94,18 +94,18 @@ def popup_Yes_No(text='Just text',
                    font=font
                    )
          ]
-    ]
+        ]
 
     # Create the popup
     window = sg.Window(
-        title=title,
-        layout=layout,
-        icon=icon,
-        # location=location,
-        resizable=False,
-        grab_anywhere=grab_anywhere,
-        keep_on_top=keep_on_top,
-    )
+            title=title,
+            layout=layout,
+            icon=icon,
+            # location=location,
+            resizable=False,
+            grab_anywhere=grab_anywhere,
+            keep_on_top=keep_on_top,
+            )
 
     # Show and read the popup
     event, values = window.Show()
@@ -169,18 +169,18 @@ def popup_Ok(text='',
                    font=font
                    )
          ]
-    ]
+        ]
 
     # Create the popup
     window = sg.Window(
-        title=title,
-        layout=layout,
-        icon=icon,
-        # location=location,
-        resizable=False,
-        grab_anywhere=grab_anywhere,
-        keep_on_top=keep_on_top,
-    )
+            title=title,
+            layout=layout,
+            icon=icon,
+            # location=location,
+            resizable=False,
+            grab_anywhere=grab_anywhere,
+            keep_on_top=keep_on_top,
+            )
 
     # Show the popup
     window.Show()
@@ -296,7 +296,8 @@ def popup_error(error_raport, icon=GLOBAL_ICON):
     return popup_Ok(text=error_raport,
                     title=title,
                     buttons_text=buttons_text,
-                    icon=icon)
+                    icon=icon
+                    )
 
 
 # ToDo: Если успешно: "Закрыть программу? -> Да / Нет"
@@ -428,7 +429,7 @@ def create_main_layout():
                    font=('Arial', 12),
                    )
          ],
-    ]
+        ]
 
     return main_layout
 
@@ -447,14 +448,14 @@ def create_main_window():
     # sg.SetOptions(window_location=(300, 250))
     # Create the Window
     window = sg.Window(
-        title=CONFIG.get(LANGUAGE, '-n_main_window-'),
-        layout=create_main_layout(),
-        icon=GLOBAL_ICON,
-        # location=(300, 200),
-        # resizable=False,
-        grab_anywhere=True,
-        # size=(1000, 600)
-    )
+            title=CONFIG.get(LANGUAGE, '-n_main_window-'),
+            layout=create_main_layout(),
+            icon=GLOBAL_ICON,
+            # location=(300, 200),
+            # resizable=False,
+            grab_anywhere=True,
+            # size=(1000, 600)
+            )
 
     return window
 
@@ -619,14 +620,26 @@ def error_processing():
     err = sys.exc_info()[1]
     object_id = sys.exc_info()[2]
 
+    print(f'\n{"#" * 20}\nsys.exc_info()\t{sys.exc_info()}\n'
+          f'type_err\t{type_err}\n'
+          f'err\t{err}\n'
+          f'object_id\t{object_id}\n{"#" * 20}\n'
+          )
+
     if type_err == KeyError:
         return error_processing_col_names(type_err, err, object_id)
 
     elif type_err == Exception:
-        print(f'type_err\t{type_err}\nerr\t{err}\nsys.exc_info()\t{sys.exc_info()}')
-        type_err = err[0]
+        # print(f'type_err\t{type_err}\nerr\t{err}\nsys.exc_info()\t{sys.exc_info()}')
+        type_err = err.args[0][0]
+        # err_args = err.args
+
+        # type_err, err, object_id = err_args
         # object_id = err[2]
         # err = err[1]
+        print(f'\n{"#" * 10}\nerr.args\t{err.args[0]}\n'
+              f'type_err\t{type_err}\n{"#" * 10}\n'
+              )
 
         if type_err == 'FormatError':
             return CONFIG.get(LANGUAGE, '-t_error_FormatError-')
@@ -662,7 +675,7 @@ def create_files_fault_tolerant(event, values):
         create_files(event, values)
         return None
 
-    except Exception:
+    except:
         return error_processing()
 
 
