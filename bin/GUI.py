@@ -46,7 +46,7 @@ def popup_Yes_No(text='Just text',
                  font=('Arial', 14),
                  grab_anywhere=True,
                  keep_on_top=True,
-                 # location=(600, 400)
+                 location=(600, 400)
                  ):
     """Displays a confirmation pop-up window, the names of the buttons can be changed
 
@@ -101,7 +101,7 @@ def popup_Yes_No(text='Just text',
             title=title,
             layout=layout,
             icon=icon,
-            # location=location,
+            location=location,
             resizable=False,
             grab_anywhere=grab_anywhere,
             keep_on_top=keep_on_top,
@@ -124,7 +124,7 @@ def popup_Ok(text='',
              font=('Arial', 14),
              grab_anywhere=True,
              keep_on_top=True,
-             # location=(600, 400)
+             location=(600, 400)
              ):
     """Displays a confirmation pop-up window, with a changeable button name
 
@@ -176,7 +176,7 @@ def popup_Ok(text='',
             title=title,
             layout=layout,
             icon=icon,
-            # location=location,
+            location=location,
             resizable=False,
             grab_anywhere=grab_anywhere,
             keep_on_top=keep_on_top,
@@ -196,7 +196,7 @@ def popup_close(buttons_size=(70, 40),
                 font=('Arial', 18),
                 grab_anywhere=True,
                 keep_on_top=True,
-                # location=(600, 400),
+                location=(600, 400),
                 ):
     """Displays a pop-up window confirming the intention to close the program
 
@@ -231,7 +231,7 @@ def popup_close(buttons_size=(70, 40),
                         font=font,
                         grab_anywhere=grab_anywhere,
                         keep_on_top=keep_on_top,
-                        # location=location
+                        location=location
                         )
 
 
@@ -251,7 +251,7 @@ def show_manual_work_program(icon=GLOBAL_ICON):
     return popup_Ok(text=message,
                     title=title,
                     buttons_text=buttons_text,
-                    # location=(100, 60),
+                    location=(100, 60),
                     icon=icon
                     )
 
