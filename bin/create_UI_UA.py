@@ -445,7 +445,8 @@ def create_df_ua_part2(df_authors):
         finish_df = pd.DataFrame()
         finish_df['name'] = df_authors['last_name'] + ' ' + \
                             [x[:1] for x in df_authors['first_name']] + '.' + \
-                            [x[:1] for x in df_authors['middle_name']] + '.'
+                            [str(x)[:1] for x in df_authors['middle_name']] + '.'
+
         finish_df['date_UA'] = df_authors['date_UA']
         return finish_df
 
@@ -564,7 +565,7 @@ def create_sign_date(date=''):
     if not date:
         date = datetime.now()
     else:
-        dateFormatter = "%d.%m.%Y"
+        dateFormatter = "%d.%m.%y"
         date = datetime.strptime(date, dateFormatter)
 
     sign_date = f'Дата: «{date.day}» {date.month} {date.year}г.'
