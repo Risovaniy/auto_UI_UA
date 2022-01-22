@@ -569,15 +569,11 @@ def make_question_for_sure(config_key, path_data, path_dir):
     return question
 
 
-def error_processing_col_names(type_err, err, object_id):
-    """Key error handling, most often incorrect source data
+def error_processing_col_names(err):
+    """Preparing ErrorKey and return the message with info for fix it
 
-    :param type_err: Name of the error type
-    :type type_err: str
-    :param err: The error itself
-    :type err: str
-    :param object_id: ID of the object where the error occurred
-    :type object_id: str
+    :param err: Full error information for deployment via .args
+    :type err: BaseException
     :return: Information about the error and how to fix it
     :rtype: str
 
@@ -591,24 +587,8 @@ def error_processing_col_names(type_err, err, object_id):
                           'contribution': 'Творческий вклад',
                           'contract': 'Контракт/Договор',
                           'date_employ': 'Дата трудоустройства'}
-    err_args = err.args[0]
-    type_err = str(err_args[0])
-    # Remove ', else we have keys like "'job'"
-    err = str(err_args[1])[1:-1]
-    object_id = err_args[2]
-
-########## Не работает сравнение ошибки со словарем !!!!!!!!!!!!!!!!!!!!!!!!!!
-    # print(f'\n{"#" * 30}error_processing_col_names\n'
-    #       f'err_args\t{err_args}\t\t{type(err_args)}\n'
-    #       f'type_err\t{type_err}\t\t{type(type_err)}\n'
-    #       f'err\t{err}\t\t{type(err)}\n'
-    #       f'object_id\t{object_id}\t\t{type(object_id)}\n{"#" * 30}\n'
-    #       f'err in dict_for_translate\t{err in dict_for_translate}\n'
-    #       f'{err in str(dict_for_translate)}\n'
-    #       f'{err in list(dict_for_translate)}\n'
-    #       f'{err in set(dict_for_translate)}\n'
-    #       f'dict_for_translate.keys()\t{dict_for_translate}\t\t{type(dict_for_translate)}\n'
-    #       )
+    # Remove "'", else we have keys like "'job'"
+    err = str(err.args[0][1])[1:-1]
 
     # Error handling of column names in source data
     if err in dict_for_translate:
@@ -618,6 +598,8 @@ def error_processing_col_names(type_err, err, object_id):
 
     # In case the KeyError got out not from the column names
     else:
+        type_err = str(err.args[0][0])
+        object_id = err.args[0][2]
         message = CONFIG.get(LANGUAGE, '-t_error-'). \
             replace('$TypeError$', str(type_err)). \
             replace('$Error$', str(err)). \
@@ -628,8 +610,6 @@ def error_processing_col_names(type_err, err, object_id):
 def error_processing():
     """Error handling of any type and formation of correction information
 
-    :param error: Tuple with error information ('TypeError', 'Error', 'ObjectID')
-    :type error: tuple
     :return: Error report text to output to popup
     :rtype: str
 
@@ -638,26 +618,12 @@ def error_processing():
     err = sys.exc_info()[1]
     object_id = sys.exc_info()[2]
 
-    print(f'\n{"#" * 20}\nsys.exc_info()\t{sys.exc_info()}\n'
-          f'type_err\t{type_err}\n'
-          f'err\t{err}\n'
-          f'object_id\t{object_id}\n{"#" * 20}\n'
-          )
-
     if type_err == KeyError:
-        return error_processing_col_names(type_err, err, object_id)
+        return error_processing_col_names(err)
 
     elif type_err == Exception:
         # print(f'type_err\t{type_err}\nerr\t{err}\nsys.exc_info()\t{sys.exc_info()}')
         type_err = err.args[0][0]
-        # err_args = err.args
-
-        # type_err, err, object_id = err_args
-        # object_id = err[2]
-        # err = err[1]
-        print(f'\n{"#" * 10}\nerr.args\t{err.args[0]}\n'
-              f'type_err\t{type_err}\n{"#" * 10}\n'
-              )
 
         if type_err == 'FormatError':
             return CONFIG.get(LANGUAGE, '-t_error_FormatError-')
