@@ -3,6 +3,7 @@
 import os
 import pathlib as path
 import sys
+import traceback
 from configparser import ConfigParser
 import PySimpleGUIQt as sg
 from bin.create_UI_UA import make_only_UI, make_only_UA, make_UI_and_UA
@@ -729,7 +730,9 @@ def error_processing():
     print(f'\tsys.exc_info()\t\t{sys.exc_info()}\n'
           f'\t\ttype_err\t\t{type_err}\n'
           f'\t\terr\t\t{err}\n'
-          f'\t\tobject_id\t\t{object_id}\n\n')
+          f'\t\tobject_id\t\t{object_id}\n'
+          # f'\t\tsys.last_traceback\t\t{sys.last_traceback()}\n'
+          f'\t\t2sys.last_traceback\t\t{traceback.print_tb(object_id)}\n\n')
 
     if type_err == KeyError:
         return error_processing_col_names(err)
