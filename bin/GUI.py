@@ -622,7 +622,12 @@ def launch_main_window():
 
             error = create_files_fault_tolerant(event=event, values=values)
 
-            if not error:
+            # Refusal to create documents
+            if error is False:
+                window.Enable()
+                continue
+
+            elif error is True:
                 if popup_success():
                     break
 
@@ -721,6 +726,11 @@ def error_processing():
     err = sys.exc_info()[1]
     object_id = sys.exc_info()[2]
 
+    print(f'\tsys.exc_info()\t\t{sys.exc_info()}\n'
+          f'\t\ttype_err\t\t{type_err}\n'
+          f'\t\terr\t\t{err}\n'
+          f'\t\tobject_id\t\t{object_id}\n\n')
+
     if type_err == KeyError:
         return error_processing_col_names(err)
 
@@ -739,9 +749,9 @@ def error_processing():
 
     else:
         message = CONFIG.get(LANGUAGE, '-t_error-'). \
-            replace('$TypeError$', type_err). \
-            replace('$Error$', err). \
-            replace('$ObjectID$', object_id)
+            replace('$TypeError$', str(type_err)). \
+            replace('$Error$', str(err)). \
+            replace('$ObjectID$', str(object_id))
         return message
 
 
@@ -753,14 +763,15 @@ def create_files_fault_tolerant(event, values):
     :type event: str
     :param values: Dictionary with current interface parameters
     :type values: dict
-    :return: Error report text to output to popup
+    :return: Error report text to output to popup, or True - success,
+             or False - refusal,
     :rtype: str
 
     """
     # Catching errors when generating files (the basis is incorrect source data)
     try:
-        create_files(event, values)
-        return None
+        result = create_files(event, values)
+        return result
 
     except:
         return error_processing()
@@ -774,8 +785,9 @@ def create_files(event, values):
     :type event: str
     :param values: Dictionary with current interface parameters
     :type values: dict
-    :return: The function just either creates files or causes an error
-    :rtype: None
+    :return: The function creates files: True - if successful, False - if you
+            decide not to create. Errors are called in functions separately
+    :rtype: bool
 
     """
     path_input_data = values['-input_path-']
@@ -802,7 +814,9 @@ def create_files(event, values):
         elif event == '-b_create_UI_and_UA-':
             make_UI_and_UA(path_input_data, path_output_dir)
 
-    return None
+        return True
+
+    return False
 
 
 def check_exit_from_def(window):
