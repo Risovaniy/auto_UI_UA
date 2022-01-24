@@ -123,7 +123,7 @@ def rename_columns(df_raw):
     return df_renamed_cols
 
 
-def remove_first_last_whitespaces_from_df(df_raw):
+def del_1_and_last_whitespaces_in_all_df(df_raw):
     """Removes extra spaces from the end and beginning of all lines and
     names of columns
 
@@ -143,6 +143,7 @@ def remove_first_last_whitespaces_from_df(df_raw):
     return df_raw
 
 
+
 def all_preprocessing_df(df_raw):
     """Starting preprocessing of a raw dataframe with data about authors
 
@@ -152,7 +153,9 @@ def all_preprocessing_df(df_raw):
     :rtype: pandas.core.frame.DataFrame
 
     """
-    result = remove_first_last_whitespaces_from_df(df_raw)
+    result = del_1_and_last_whitespaces_in_all_df(df_raw)
+
+    result = result.fillna('')
 
     result = rename_columns(result)
 
