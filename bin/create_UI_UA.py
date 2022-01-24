@@ -28,9 +28,6 @@ def create_docx_fmt():
     # Initial Document object
     new_doc = docx.Document()
 
-    # ToDo Create a template in MS Word with my table style
-    # # Initial Document object
-    # new_doc = docx.Document('TEMPLATE_table_for_UA.docx')
 
     # Specify the main name and font size for the document
     new_doc.styles['Normal'].font.name = 'Times New Roman'
@@ -60,10 +57,6 @@ def create_table_fmt(document, count_rows, count_cols):
 
     # Set the style to the table
     table.style = 'Table Grid'
-
-    # ToDo Create a template in MS Word with my table style
-    # # Set the my style without the boards to the table
-    # table.style = 'Without Boards'
 
     return table
 
@@ -460,21 +453,13 @@ def create_df_ua_part2(df_authors):
         raise KeyError(sys.exc_info())
 
 
-# ToDo Optimize the operation of the program. It seems very slow
-#  1. I can to split the fn:
-#       First, to create a table with authors (with design).
-#       Second, to add a second rows with smaller font and the identical data
-#       Third, to add a third empty rows (between other cells)
-#  Maybe one of this will be more faster than it's now
-def create_UA_docx(doc, df_UA, signature_date, path_dir_to_save):
+def create_UA_docx(doc, df_UA, path_dir_to_save):
     """Add the table in UA and save the result UA document (both text and table)
 
     :param doc: Doc with added text by authors
     :type doc: docx.document.Document
     :param df_UA: Prepared dataframe with authors data for the table
     :type df_UA: pandas.core.frame.DataFrame
-    :param signature_date: The date of signing of the UA, everyone has the same
-    :type signature_date: str
     :param path_dir_to_save: The path to the directory to save the created doc
     :type path_dir_to_save: str
     :return: Saves the created UA document (both text and table)
@@ -500,10 +485,6 @@ def create_UA_docx(doc, df_UA, signature_date, path_dir_to_save):
 
     # Fill the table of the data
     for row in range(table_rows):
-
-        # ToDo: Try to create arrays (with help range()) with currect numbers
-        #  (remove the check for the remainder of the division)
-
         # Short cell names of one row of the table
         cell_0 = table.cell(row, 0)
         cell_1 = table.cell(row, 1)
@@ -570,32 +551,28 @@ def create_sign_date(date):
     else:
         dateFormatter = "%d.%m.%y"
         date = datetime.strptime(str(date), dateFormatter)
-        sign_date = f'Дата: «{date.day}» {date.month} {date.year}г.'
+        sign_date = f'Дата: «{date.strftime("%d")}» {date.strftime("%m")} {date.year}г.'
 
     return sign_date
 
 
-def generate_file_UA(df_authors, dir_for_save='', sign_date=''):
+def generate_file_UA(df_authors, dir_for_save=''):
     """Creating the UA doc file based on the authors' data
 
     :param df_authors: The original dataframe with all the info about the authors
     :type df_authors: pandas.core.frame.DataFrame
     :param dir_for_save: The path to the directory to save the created file
     :type dir_for_save: str
-    :param sign_date: Date of signing of the UA
-    :type sign_date: str
     :return: Save the created file
     :rtype: None
 
     """
     # Create doc with text part of UA
-    sign_date = create_sign_date(sign_date)
-
     doc_with_text_UA = create_doc_with_UA_1part(df_authors)
 
     # Adding the table create_df_ua_part2(df_in)
 
-    create_UA_docx(doc_with_text_UA, create_df_ua_part2(df_authors), sign_date,
+    create_UA_docx(doc_with_text_UA, create_df_ua_part2(df_authors),
                    dir_for_save)
 
 
