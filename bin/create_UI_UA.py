@@ -125,7 +125,9 @@ def create_df_ui(df_authors):
         # Remove double dot for events when not exist a middle name
         finish_df['full_name'] = finish_df['full_name'].\
             apply(lambda x: str(x).replace('..', '.'))
-
+## If не поможет, тут можно попробовать через фильтрацию
+## 1. Присваиваем значения для finish_df[df_authors['academic'] == ''].work_place
+## 2. Присваиваем значения для finish_df[df_authors['academic'] != ''].work_place
         # Adding the work_place column in data
         if df_authors['academic'] == '':
             finish_df['work_place'] = f"{df_authors['job']},\n " \
