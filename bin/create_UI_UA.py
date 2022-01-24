@@ -3,8 +3,6 @@ import sys
 from datetime import datetime
 import locale
 import os
-
-from numpy import nan
 import pandas as pd
 import docx
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
@@ -131,6 +129,9 @@ def create_df_ui(df_authors):
         finish_df['full_name'] = f"{df_authors['last_name']} \n" \
                                  f"{df_authors['first_name']} \n" \
                                  f"{df_authors['middle_name']}"
+        # Remove double dot for events when not exist a middle name
+        finish_df['full_name'] = finish_df['full_name'].\
+            apply(lambda x: str(x).replace('..', '.'))
 
         # Adding the work_place column in data
         if df_authors['academic'] == '':
@@ -447,7 +448,10 @@ def create_df_ua_part2(df_authors):
         finish_df = pd.DataFrame()
         finish_df['name'] = df_authors['last_name'] + ' ' + \
                             [x[:1] for x in df_authors['first_name']] + '.' + \
-                            [str(x)[:1] for x in df_authors['middle_name']] + '.'
+                            [x[:1] for x in df_authors['middle_name']] + '.'
+        # Remove double dot for events when not exist a middle name
+        finish_df['name'] = finish_df['name'].\
+            apply(lambda x: str(x).replace('..', '.'))
 
         finish_df['date_UA'] = df_authors['date_UA']
         return finish_df
@@ -560,7 +564,7 @@ def create_sign_date(date):
     :rtype: str
 
     """
-    if date is nan or date == '':
+    if date == '':
         sign_date = f'Дата: «__» __ 20__г.'
 
     else:
