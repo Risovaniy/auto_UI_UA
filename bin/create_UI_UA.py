@@ -3,6 +3,8 @@ import sys
 from datetime import datetime
 import locale
 import os
+
+from numpy import nan
 import pandas as pd
 import docx
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
@@ -548,27 +550,23 @@ def create_UA_docx(doc, df_UA, signature_date, path_dir_to_save):
     doc.save(f"{path_dir_to_save}{os.sep}UA__{created_date}.docx")
 
 
-# ToDo: Файлы в betta версии нормально закоммитить и сделать норм шириину строк
-
-# ToDo: Проверить используемые библеотеки на лицензии, какие услвия, особенно
-#  для оформления РИД
-def create_sign_date(date=''):
+def create_sign_date(date):
     """Creating a line with the signature date in the desired design
 
-    :param date: The date of signing of the UA,
-                 by default - the date of launching the function
+    :param date: The date of signing of the UA,If there is no value,
+                 then a mask is created to enter the date manually
     :type date: str
     :return: The date in the desired format for insertion into the table
     :rtype: str
 
     """
-    if not date:
-        date = datetime.now()
+    if date is nan or date == '':
+        sign_date = f'Дата: «__» __ 20__г.'
+
     else:
         dateFormatter = "%d.%m.%y"
-        date = datetime.strptime(date, dateFormatter)
-
-    sign_date = f'Дата: «{date.day}» {date.month} {date.year}г.'
+        date = datetime.strptime(str(date), dateFormatter)
+        sign_date = f'Дата: «{date.day}» {date.month} {date.year}г.'
 
     return sign_date
 
