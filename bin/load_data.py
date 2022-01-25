@@ -159,7 +159,7 @@ def all_preprocessing_df(df_raw):
     """
     result = del_1_and_last_whitespaces_in_all_df(df_raw)
 
-    result = result.fillna('___')
+    result = result.fillna('')
 
     result = rename_columns(result)
 
