@@ -14,10 +14,10 @@ def read_config_and_language():
     (all text fields are written there)
 
     :return: (config, language)
-            :param config: A file with configs for the current localization
-            :type config: configparser.ConfigParser
-            :param language: The current localization
-            :type language: str
+            config: A file with configs for the current localization
+            config: configparser.ConfigParser
+            type language: The current localization
+            type language: str
     :rtype: tuple
 
     """
@@ -379,7 +379,6 @@ def popup_error(error_raport, icon=GLOBAL_ICON):
                     )
 
 
-# ToDo: Если успешно: "Закрыть программу? -> Да / Нет"
 def popup_success(buttons_size=(70, 40),
                   grab_anywhere=True,
                   ):
