@@ -208,6 +208,92 @@ def popup_close(buttons_size=(70, 40),
                         )
 
 
+def popup_example_of_table(
+                    button_size=(150, 40),
+                    icon=GLOBAL_ICON,
+                    font=('Arial', 12),
+                    grab_anywhere=True,
+                    keep_on_top=True,
+                    location=(600, 400)
+):
+    """Display a popup with the example of the table for the input data
+
+    :param button_size: Tuple of button sizes in pixels (width, height)
+    :type button_size: tuple
+    :param icon: The path to the popup icon
+    :type icon: str
+    :param font: A tuple with the characteristics of the text (size, outline, etc.)
+    :type font: tuple
+    :param grab_anywhere: Is it possible to move the window with a grip anywhere
+    :type grab_anywhere: bool
+    :param keep_on_top: Whether to support a window from above
+    :type keep_on_top: bool
+    :param location: Coordinates of the window appearance (centered if 1 screen)
+    :type location: tuple
+    :return: The window is informational (often manuals), it can only be closed
+    :rtype: None
+
+    """
+    # Add a theme
+
+    sg.ChangeLookAndFeel(CONFIG.get('THEMES', "-theme_popup-"))
+    title = CONFIG.get(LANGUAGE, '-n_example_of_table-')
+    button_text = CONFIG.get(LANGUAGE, '-b_close-')
+
+    values = [['Дмитрий', 'Комаров', 'Петрович', 'д-р физ.-мат. наук',
+               'договором № 123 от 01.01.2020', 'введение, заключение',
+               'директор отделения', 'АО «ГНЦ РФ ТРИНИТИ»', '21.10.17',
+               '01.08.18'],
+              ['Анна', 'Топоркова', '', 'канд. физ.-мат. наук',
+               'договором № 123 от 01.01.2020', 'разделы 1, 2',
+               'ведущий инженер', 'АО «ГНЦ РФ ТРИНИТИ»', '21.08.18',
+               '01.08.20'],
+              ['Юрий', 'Иванов', 'Сергеевич', 'д-р техн. наук',
+               'договором № 321 от 01.01.2020', 'разделы 2-4',
+               'главный научный сотрудник', 'ФГУП «РФЯЦ — ВНИИЭФ»', '',
+               '01.01.22'],
+              ['Алексей', 'Ковалев', '', 'канд. хим. наук',
+               'договором № 321 от 01.01.2020', 'раздел 2',
+               'старший научный сотрудник', 'ФГУП «РФЯЦ — ВНИИЭФ»', '',
+               '01.01.22']]  # : Any,
+    headings = ['Имя', 'Фамилия', 'Отчество', 'ученое звание',
+                'Контракт/договор', 'Творческий вклад', 'Должность',
+                'Место работы', 'Дата трудоустройства',
+                'Дата подписания УА']  # : Any = None,
+
+    layout = [
+        [sg.Table(values=values,
+                  headings=headings,
+                  font=font,
+                  header_font=font,
+                  )],
+        [sg.Stretch(),
+         sg.Button(button_text=button_text,
+                   size=button_size,
+                   font=font
+                   )
+         ]]
+    # Create the popup
+    window = sg.Window(
+        title=title,
+        layout=layout,
+        icon=icon,
+        location=location,
+        resizable=True,
+        grab_anywhere=grab_anywhere,
+        keep_on_top=keep_on_top,
+        size=(600, 400),
+    )
+
+    # Show the popup
+    window.Show()
+
+    # Close the popup
+    window.Close()
+
+    return None
+
+
 def popup_long_text(text='',
                     title='Main title',
                     button_text='Ok',
@@ -218,7 +304,7 @@ def popup_long_text(text='',
                     keep_on_top=True,
                     location=(600, 400)
                     ):
-    """Display a popup for a long text (browser text)
+    """Create a popup for a long text (browser text)
 
     :param text: The long text for showing
     :type text: str
@@ -238,8 +324,8 @@ def popup_long_text(text='',
     :type keep_on_top: bool
     :param location: Coordinates of the window appearance (centered if 1 screen)
     :type location: tuple
-    :return: The window is informational (often manuals), it can only be closed
-    :rtype: None
+    :return: The popup is informational (often manuals), it can only be closed
+    :rtype: PySimpleGUIQt.PySimpleGUIQt.Window
 
     """
     # Add a theme
@@ -252,6 +338,7 @@ def popup_long_text(text='',
                       background_color='white',
                       change_submits=True,
                       enable_events=True,
+                      size=(None, 800)
                       )],
 
         [sg.Text(size=(600, 20))],
@@ -276,13 +363,83 @@ def popup_long_text(text='',
             size=(600, 400),
             )
 
-    # Show the popup
-    window.Show()
+    # # Show the popup
+    # window.Show()
+    #
+    # # Close the popup
+    # window.Close()
 
-    # Close the popup
-    window.Close()
+    return window
 
-    return None
+
+def popup_long_text_manual(text='',
+                           title='Main title',
+                           button_text='Ok',
+                           # button_size=(150, 40),
+                           icon=GLOBAL_ICON,
+                           font=('Arial', 14),
+                           # grab_anywhere=True,
+                           keep_on_top=True,
+                           location=(600, 400)
+                           ):
+    """Create a popup for a long text (browser text)
+
+    :param text: The long text for showing
+    :type text: str
+    :param title: Title of the popup window
+    :type title: str
+    :param button_text: The name of the button, usually "close"
+    :type button_text: str
+    :param button_size: Tuple of button sizes in pixels (width, height)
+    :type button_size: tuple
+    :param icon: The path to the popup icon
+    :type icon: str
+    :param font: A tuple with the characteristics of the text (size, outline, etc.)
+    :type font: tuple
+    :param grab_anywhere: Is it possible to move the window with a grip anywhere
+    :type grab_anywhere: bool
+    :param keep_on_top: Whether to support a window from above
+    :type keep_on_top: bool
+    :param location: Coordinates of the window appearance (centered if 1 screen)
+    :type location: tuple
+    :return: The popup is informational (often manuals), it can only be closed
+    :rtype: PySimpleGUIQt.PySimpleGUIQt.Window
+
+    """
+    # Add a theme
+    sg.ChangeLookAndFeel(CONFIG.get('THEMES', "-theme_popup-"))
+
+    # Create the layout for popup
+    layout = [
+        # Скопировать часть кода с преставлением длинного текста и потом добавить кнопку для показа примера того как заполнять таблицу
+
+        [sg.Stretch(),
+         sg.Button(button_text=CONFIG.get(LANGUAGE, '-b_close-'),
+                   # auto_size_button=True ,
+                   size=(400, 40),
+                   font=font
+                   )
+         ]]
+
+    # Create the popup
+    window = sg.Window(
+            title=title,
+            layout=layout,
+            icon=icon,
+            location=location,
+            resizable=True,
+            grab_anywhere=grab_anywhere,
+            keep_on_top=keep_on_top,
+            size=(600, 400),
+            )
+
+    # # Show the popup
+    # window.Show()
+    #
+    # # Close the popup
+    # window.Close()
+
+    return window
 
 
 def show_manual_work_program():
@@ -300,12 +457,16 @@ def show_manual_work_program():
     button_text = CONFIG.get(LANGUAGE, '-b_close-')
     icon = GLOBAL_ICON
 
-    return popup_long_text(text=message,
-                           title=title,
-                           button_text=button_text,
-                           # location=(100, 60),
-                           icon=icon,
-                           )
+    popup = popup_long_text(text=message,
+                            title=title,
+                            button_text=button_text,
+                            icon=icon,
+                            # location=(100, 60),
+                            )
+    popup.Show()
+    popup.Close()
+
+    return None
 
 
 def show_manual_input_data():
@@ -320,15 +481,26 @@ def show_manual_input_data():
     """
     message = CONFIG.get(LANGUAGE, '-t_manual_data-')
     title = CONFIG.get(LANGUAGE, '-n_manual_data-')
-    button_text = CONFIG.get(LANGUAGE, '-b_close-')
+    button_text = CONFIG.get(LANGUAGE, '-b_example_of_table-')
     icon = GLOBAL_ICON
+    # Copy my table with example in this place
 
-    return popup_long_text(text=message,
-                           title=title,
-                           button_text=button_text,
-                           # location=(100, 110),
-                           icon=icon
-                           )
+
+    popup = popup_long_text_manual(text=message,
+                                   title=title,
+                                   button_text=button_text,
+                                   # location=(100, 110),
+                                   icon=icon
+                                   )
+
+    event, values = popup.Show()
+    if event == '-b_example_of_table-':
+        popup_example_of_table()
+
+
+    popup.Close()
+
+    return None
 
 
 def popup_error(error_raport, icon=GLOBAL_ICON):
