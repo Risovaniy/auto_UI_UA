@@ -280,7 +280,7 @@ def generate_text_for_one(df_row, doc, organization):
     run_0_0.text = "Я, "
 
     run_0_1 = doc.paragraphs[-1].add_run()
-    run_0_1.text = f"___________{df_row['full_name']}___________________________,"
+    run_0_1.text = f"\t\t{df_row['full_name']}\t\t\t\t\t,"
     run_0_1.font.underline = True
 
     doc.add_paragraph()
@@ -296,7 +296,7 @@ def generate_text_for_one(df_row, doc, organization):
     run_2_0.text = "настоящим уведомляю "
 
     run_2_1 = doc.paragraphs[-1].add_run()
-    run_2_1.text = f"___________{organization}________________________"
+    run_2_1.text = f"\t\t{organization}\t\t\t\t\t"
     run_2_1.font.underline = True
 
     doc.add_paragraph()
@@ -406,7 +406,7 @@ def generate_text_for_one(df_row, doc, organization):
     run_14_1.text = df_row['contribution']
     run_14_1.font.underline = True
     run_14_2 = doc.paragraphs[-1].add_run()
-    run_14_2.text = "____________________________________________"
+    run_14_2.text = "_____________________________"
 
     # White spaces x2
     doc.add_paragraph()
