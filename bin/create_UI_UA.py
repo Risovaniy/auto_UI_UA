@@ -115,34 +115,46 @@ def create_df_ui(df_authors):
         # Initial an empty dataframe create uvedomlenie ispolniteley
         finish_df = pd.DataFrame()
 
-        # Creating the first column "serial number"
+        # Create the first column "serial number"
         finish_df['number'] = pd.Series(range(1, len(df_authors) + 1)).astype(str)
 
-        # Creating the full names of authors (ФИО)
-        finish_df['full_name'] = f"{df_authors['last_name']} \n" \
-                                 f"{df_authors['first_name']} \n" \
-                                 f"{df_authors['middle_name']}"
-        # Remove double dot for events when not exist a middle name
-        finish_df['full_name'] = finish_df['full_name'].\
-            apply(lambda x: str(x).replace('..', '.'))
-## If не поможет, тут можно попробовать через фильтрацию
-## 1. Присваиваем значения для finish_df[df_authors['academic'] == ''].work_place
-## 2. Присваиваем значения для finish_df[df_authors['academic'] != ''].work_place
-        # Adding the work_place column in data
-        if df_authors['academic'] == '':
-            finish_df['work_place'] = f"{df_authors['job']},\n " \
-                                      f"{df_authors['post']}"
-        else:
-            finish_df['work_place'] = f"{df_authors['job']},\n " \
-                                      f"{df_authors['post']},\n" \
-                                      f"{df_authors['academic']}"
+        # Create the full names of authors (ФИО)
+        finish_df['full_name'] = df_authors['last_name'] + "\n" + \
+                                 df_authors['first_name'] + "\n" + \
+                                 df_authors['middle_name']
 
-        # Creating the approval column by default
+        # work_place is [organisation,\n post,\n academic]
+        finish_df['work_place'] = df_authors['job'] + ",\n" + \
+                                  df_authors['post'] + ",\n" + \
+                                  df_authors['academic']
+        # Delete marked absences of academic rank
+        finish_df['work_place'] = finish_df['work_place'].apply(del_end_comma)
+
+        # Create the approval column by default
         finish_df['approval'] = 'Не требуется'
 
         return finish_df
     except KeyError:
         raise KeyError(sys.exc_info())
+
+
+def del_end_comma(element):
+    """Remove the last "empty" comma
+
+    :param element: Element from the 'work_space' column
+    :type element: str
+    :return: Correct value, without extra characters
+    :rtype: str
+
+    """
+    # Remove leading and ending whitespace characters from name of the columns
+    element = str(element).strip()
+
+    # Find and remove the last and useless comma from the end of the line
+    if element[-1] == ',':
+        element = element[:-1]
+
+    return element
 
 
 def create_UI_docx(df_UI, path_dir_to_save):
@@ -171,7 +183,7 @@ def create_UI_docx(df_UI, path_dir_to_save):
     # Add the column names with right formatting
     my_table = create_column_names_ui(my_table)
 
-    # Filling the table
+    # Fill the table
     for row in range(table_rows):
         for col in range(table_cols):
 
