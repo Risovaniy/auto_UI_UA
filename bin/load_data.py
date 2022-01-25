@@ -107,17 +107,21 @@ def rename_columns(df_raw):
     """
     # Dictionary for unambiguous renaming of columns, so as not to depend on
     # the order of the columns themselves
-    dict_for_renaming = {'Фамилия': 'last_name',
-                         'Имя': 'first_name',
-                         'Отчество': 'middle_name',
-                         'Должность': 'post',
-                         'Ученое звание': 'academic',
-                         'Место работы': 'job',
-                         'Творческий вклад': 'contribution',
-                         'Контракт/Договор': 'contract',
-                         'Дата подписания УА': 'date_UA',
-                         'Дата трудоустройства': 'date_employ'}
+    dict_for_renaming = {'фамилия': 'last_name',
+                             'имя': 'first_name',
+                        'отчество': 'middle_name',
+                       'должность': 'post',
+                   'ученое звание': 'academic',
+                    'место работы': 'job',
+                'творческий вклад': 'contribution',
+                'контракт/договор': 'contract',
+              'дата подписания уа': 'date_UA',
+            'дата трудоустройства': 'date_employ'}
 
+    # Removing the case dependency
+    df_raw.columns = df_raw.columns.str.lower()
+
+    # Rename the columns to dataframe
     df_renamed_cols = df_raw.rename(dict_for_renaming, axis=1)
 
     return df_renamed_cols
@@ -155,7 +159,7 @@ def all_preprocessing_df(df_raw):
     """
     result = del_1_and_last_whitespaces_in_all_df(df_raw)
 
-    result = result.fillna('')
+    result = result.fillna('___')
 
     result = rename_columns(result)
 
