@@ -4,10 +4,36 @@
 of this dataframe"""
 import re
 import sys
+from configparser import ConfigParser
 
 import pandas as pd
 import os.path
 from pandas_ods_reader import read_ods
+
+
+def read_config_and_language():
+    """Read the file with the localization block configs
+    (all text fields are written there)
+
+    :return: (config, language)
+            config: A file with configs for the current localization
+            config: configparser.ConfigParser
+            type language: The current localization
+            type language: str
+    :rtype: tuple
+
+    """
+    # instantiate configs
+    config = ConfigParser()
+
+    # parse existing file (c - config)
+
+    config.read('./resources/config.ini')
+
+    # read the language selected by the user (l - language)
+    language = (config.get('LOCALLY', "-language-")).upper()
+
+    return config, language
 
 
 def check_exists_file(filename):

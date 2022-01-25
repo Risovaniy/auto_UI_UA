@@ -6,37 +6,11 @@ import sys
 import traceback
 from configparser import ConfigParser
 import PySimpleGUIQt as sg
-from bin.create_UI_UA import make_only_UI, make_only_UA, make_UI_and_UA
-
-
-def read_config_and_language():
-    """Read the file with the localization block configs
-    (all text fields are written there)
-
-    :return: (config, language)
-            config: A file with configs for the current localization
-            config: configparser.ConfigParser
-            type language: The current localization
-            type language: str
-    :rtype: tuple
-
-    """
-    # instantiate configs
-    config = ConfigParser()
-
-    # parse existing file (c - config)
-
-    config.read('./resources/config.ini')
-
-    # read the language selected by the user (l - language)
-    language = (config.get('LOCALLY', "-language-")).upper()
-
-    return config, language
-
+from bin.create_UI_UA import make_only_UI, make_only_UA, make_UI_and_UA, CONFIG, \
+    LANGUAGE
 
 # Location of my global icon
 GLOBAL_ICON = str(f"{path.Path.cwd()}{os.sep}resources{os.sep}global_icon.png")
-CONFIG, LANGUAGE = read_config_and_language()
 
 
 def popup_Yes_No(text='Just text',

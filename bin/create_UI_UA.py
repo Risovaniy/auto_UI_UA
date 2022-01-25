@@ -8,14 +8,15 @@ import docx
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
 from docx.shared import Inches
 
-from bin.load_data import load_and_preprocessing_data
-
+from bin.load_data import load_and_preprocessing_data, read_config_and_language
 
 #####################################################
 #                                                   #
 #                General logic                      #
 #                                                   #
 #####################################################
+
+CONFIG, LANGUAGE = read_config_and_language()
 
 
 def create_docx_fmt():
@@ -200,7 +201,8 @@ def create_UI_docx(df_UI, path_dir_to_save):
 
     # Save the newly created file in .docx format
     created_date = datetime.now().strftime('(%Y-%m-%d_%H-%M)')
-    doc.save(f"{path_dir_to_save}{os.sep}UI__{created_date}.docx")
+    current_name = CONFIG.get(LANGUAGE, '-filename_UI-')
+    doc.save(f"{path_dir_to_save}{os.sep}{current_name}{created_date}.docx")
 
 
 def generate_file_UI(df_authors, dir_for_save=''):
@@ -546,7 +548,8 @@ def create_UA_docx(doc, df_UA, path_dir_to_save):
 
     # Save the newly created file in .docx format
     created_date = datetime.now().strftime('(%d-%m-%Y_%H-%M)')
-    doc.save(f"{path_dir_to_save}{os.sep}UA__{created_date}.docx")
+    current_name = CONFIG.get(LANGUAGE, '-filename_UA-')
+    doc.save(f"{path_dir_to_save}{os.sep}{current_name}{created_date}.docx")
 
 
 def create_sign_date(date):
