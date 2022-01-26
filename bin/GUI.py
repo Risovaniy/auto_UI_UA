@@ -208,7 +208,7 @@ def popup_close(buttons_size=(70, 40),
                         )
 
 
-def create_popup_example_of_table(
+def create_layout_example_of_table(
                     button_size=(150, 40),
                     icon=GLOBAL_ICON,
                     font=('Arial', 12),
@@ -216,7 +216,7 @@ def create_popup_example_of_table(
                     keep_on_top=True,
                     location=(600, 400)
 ):
-    """Display a popup with the example of the table for the input data
+    """Cerate a layout with the example of the table for the input data
 
     :param button_size: Tuple of button sizes in pixels (width, height)
     :type button_size: tuple
@@ -268,26 +268,9 @@ def create_popup_example_of_table(
                   font=font,
                   header_font=font,
                   )],
-        [sg.Stretch(),
-         sg.Button(button_text=button_text,
-                   size=button_size,
-                   font=font
-                   )
-         ]]
+        ]
 
-    # Create the popup
-    window = sg.Window(
-        title=title,
-        layout=layout,
-        icon=icon,
-        location=location,
-        resizable=True,
-        grab_anywhere=grab_anywhere,
-        keep_on_top=keep_on_top,
-        size=(600, 400),
-    )
-
-    return window
+    return layout
 
 
 def popup_long_text(text='',
@@ -407,22 +390,20 @@ def create_popup_manual_input_data(text='',
 
     # Create the layout for popup
     layout = [
-        [sg.Stretch(),
-         sg.Button(button_text=CONFIG.get(LANGUAGE, '-b_example_of_table-'),
-                   # auto_size_button=True ,
-                   size=(400, 40),
-                   font=font,
-                   key='-b_example_of_table-'
-                   )
-         ],
-
         [sg.Multiline(default_text=text,
                       font=font,
                       background_color='white',
                       change_submits=True,
                       enable_events=True,
-                      size=(800, None)
                       )],
+        [sg.Text(size_px=(500, 1))],
+
+        [sg.Frame(title=CONFIG.get(LANGUAGE, '-b_example_of_table-'),
+                  layout=create_layout_example_of_table(),
+                  font=font,
+                  # size=(1200, 300),
+                  # size_px=(300, 400)
+                  )],
 
         [sg.Stretch(),
          sg.Button(button_text=CONFIG.get(LANGUAGE, '-b_close-'),
@@ -430,8 +411,8 @@ def create_popup_manual_input_data(text='',
                    size=(150, 40),
                    font=font,
                    key='-b_close-'
-                   )
-         ]]
+                   )]
+    ]
 
     # Create the popup
     window = sg.Window(
@@ -474,18 +455,18 @@ def show_manual_input_data():
 
     popup.Show()
 
-    while True:
-        event, values = popup.Read()
-        if event == '-b_example_of_table-':
-            example = create_popup_example_of_table()
-            example.Show()
-            while True:
-                event_example, values_example = example.Read()
-                if event_example in ('-b_close-', sg.WIN_CLOSED):
-                    break
-            example.Close()
-        elif event in ('-b_close-', sg.WIN_CLOSED):
-            break
+    # while True:
+    #     event, values = popup.Read()
+    #     if event == '-b_example_of_table-':
+    #         example = create_popup_example_of_table()
+    #         example.Show()
+    #         while True:
+    #             event_example, values_example = example.Read()
+    #             if event_example in ('-b_close-', sg.WIN_CLOSED):
+    #                 break
+    #         example.Close()
+    #     elif event in ('-b_close-', sg.WIN_CLOSED):
+    #         break
 
     popup.Close()
 
