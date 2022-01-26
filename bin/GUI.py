@@ -725,17 +725,17 @@ def error_processing_col_names(err):
                           'date_UA': 'Дата подписания УА',
                           'date_employ': 'Дата трудоустройства'}
     # Remove "'", else we have keys like "'job'"
-    err = str(err.args[0][1])[1:-1]
+    key_err = str(err.args[0][1])[1:-1]
 
     # Error handling of column names in source data
-    if err in dict_for_translate:
+    if key_err in dict_for_translate:
         message = CONFIG.get(LANGUAGE, '-t_error_ErrorKey-'). \
-            replace('$ErrorKey$', dict_for_translate[err])
+            replace('$ErrorKey$', dict_for_translate[key_err])
         return message
 
     # In case the KeyError got out not from the column names
     else:
-        type_err = str(err.args[0][0])
+        type_err = err.args[0][0]
         message = CONFIG.get(LANGUAGE, '-t_error-'). \
             replace('$TypeError$', str(type_err)). \
             replace('$Error$', str(err))

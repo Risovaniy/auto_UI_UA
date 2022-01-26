@@ -482,8 +482,8 @@ def create_UA_docx(doc, df_UA, path_dir_to_save):
     :rtype: None
 
     """
-    # Big space between the text about the authors and the table with signatures
-    [doc.add_paragraph() for i in range(5)]
+    # Space between the text about the authors and the table with signatures
+    [doc.add_paragraph()]*5
 
     # Calculate a shape of the table
     count_authors = df_UA.shape[0]
