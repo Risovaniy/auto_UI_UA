@@ -208,7 +208,7 @@ def popup_close(buttons_size=(70, 40),
                         )
 
 
-def popup_example_of_table(
+def create_popup_example_of_table(
                     button_size=(150, 40),
                     icon=GLOBAL_ICON,
                     font=('Arial', 12),
@@ -230,8 +230,8 @@ def popup_example_of_table(
     :type keep_on_top: bool
     :param location: Coordinates of the window appearance (centered if 1 screen)
     :type location: tuple
-    :return: The window is informational (often manuals), it can only be closed
-    :rtype: None
+    :return: The popup with only example of filling table and close button
+    :rtype: PySimpleGUIQt.PySimpleGUIQt.Window
 
     """
     # Add a theme
@@ -255,11 +255,12 @@ def popup_example_of_table(
               ['Алексей', 'Ковалев', '', 'канд. хим. наук',
                'договором № 321 от 01.01.2020', 'раздел 2',
                'старший научный сотрудник', 'ФГУП «РФЯЦ — ВНИИЭФ»', '',
-               '01.01.22']]  # : Any,
+               '01.01.22']]
+
     headings = ['Имя', 'Фамилия', 'Отчество', 'ученое звание',
                 'Контракт/договор', 'Творческий вклад', 'Должность',
                 'Место работы', 'Дата трудоустройства',
-                'Дата подписания УА']  # : Any = None,
+                'Дата подписания УА']
 
     layout = [
         [sg.Table(values=values,
@@ -273,6 +274,7 @@ def popup_example_of_table(
                    font=font
                    )
          ]]
+
     # Create the popup
     window = sg.Window(
         title=title,
@@ -285,13 +287,7 @@ def popup_example_of_table(
         size=(600, 400),
     )
 
-    # Show the popup
-    window.Show()
-
-    # Close the popup
-    window.Close()
-
-    return None
+    return window
 
 
 def popup_long_text(text='',
@@ -372,16 +368,16 @@ def popup_long_text(text='',
     return window
 
 
-def popup_long_text_manual(text='',
-                           title='Main title',
-                           button_text='Ok',
-                           # button_size=(150, 40),
-                           icon=GLOBAL_ICON,
-                           font=('Arial', 14),
-                           # grab_anywhere=True,
-                           keep_on_top=True,
-                           location=(600, 400)
-                           ):
+def create_popup_manual_input_data(text='',
+                                   title='Main title',
+                                   button_text='Ok',
+                                   # button_size=(150, 40),
+                                   icon=GLOBAL_ICON,
+                                   font=('Arial', 14),
+                                   # grab_anywhere=True,
+                                   keep_on_top=True,
+                                   location=(600, 400)
+                                   ):
     """Create a popup for a long text (browser text)
 
     :param text: The long text for showing
@@ -411,13 +407,29 @@ def popup_long_text_manual(text='',
 
     # Create the layout for popup
     layout = [
-        # Скопировать часть кода с преставлением длинного текста и потом добавить кнопку для показа примера того как заполнять таблицу
+        [sg.Stretch(),
+         sg.Button(button_text=CONFIG.get(LANGUAGE, '-b_example_of_table-'),
+                   # auto_size_button=True ,
+                   size=(400, 40),
+                   font=font,
+                   key='-b_example_of_table-'
+                   )
+         ],
+
+        [sg.Multiline(default_text=text,
+                      font=font,
+                      background_color='white',
+                      change_submits=True,
+                      enable_events=True,
+                      size=(800, None)
+                      )],
 
         [sg.Stretch(),
          sg.Button(button_text=CONFIG.get(LANGUAGE, '-b_close-'),
                    # auto_size_button=True ,
-                   size=(400, 40),
-                   font=font
+                   size=(150, 40),
+                   font=font,
+                   key='-b_close-'
                    )
          ]]
 
@@ -428,18 +440,56 @@ def popup_long_text_manual(text='',
             icon=icon,
             location=location,
             resizable=True,
-            grab_anywhere=grab_anywhere,
+            # grab_anywhere=grab_anywhere,
             keep_on_top=keep_on_top,
             size=(600, 400),
             )
 
-    # # Show the popup
-    # window.Show()
-    #
-    # # Close the popup
-    # window.Close()
-
     return window
+
+
+def show_manual_input_data():
+    """Show a popup with a guide to filling out a table with data about authors
+    (without blocking the main window)
+
+    :param icon: The path to the popup icon
+    :type icon: str
+    :return: The window with the manual can only be closed
+    :rtype: None
+
+    """
+    message = CONFIG.get(LANGUAGE, '-t_manual_data-')
+    title = CONFIG.get(LANGUAGE, '-n_manual_data-')
+    button_text = CONFIG.get(LANGUAGE, '-b_example_of_table-')
+    icon = GLOBAL_ICON
+    # Copy my table with example in this place
+
+
+    popup = create_popup_manual_input_data(text=message,
+                                           title=title,
+                                           button_text=button_text,
+                                           # location=(100, 110),
+                                           icon=icon
+                                           )
+
+    popup.Show()
+
+    while True:
+        event, values = popup.Read()
+        if event == '-b_example_of_table-':
+            example = create_popup_example_of_table()
+            example.Show()
+            while True:
+                event_example, values_example = example.Read()
+                if event_example in ('-b_close-', sg.WIN_CLOSED):
+                    break
+            example.Close()
+        elif event in ('-b_close-', sg.WIN_CLOSED):
+            break
+
+    popup.Close()
+
+    return None
 
 
 def show_manual_work_program():
@@ -464,40 +514,6 @@ def show_manual_work_program():
                             # location=(100, 60),
                             )
     popup.Show()
-    popup.Close()
-
-    return None
-
-
-def show_manual_input_data():
-    """Show a popup with a guide to filling out a table with data about authors
-    (without blocking the main window)
-
-    :param icon: The path to the popup icon
-    :type icon: str
-    :return: The window with the manual can only be closed
-    :rtype: None
-
-    """
-    message = CONFIG.get(LANGUAGE, '-t_manual_data-')
-    title = CONFIG.get(LANGUAGE, '-n_manual_data-')
-    button_text = CONFIG.get(LANGUAGE, '-b_example_of_table-')
-    icon = GLOBAL_ICON
-    # Copy my table with example in this place
-
-
-    popup = popup_long_text_manual(text=message,
-                                   title=title,
-                                   button_text=button_text,
-                                   # location=(100, 110),
-                                   icon=icon
-                                   )
-
-    event, values = popup.Show()
-    if event == '-b_example_of_table-':
-        popup_example_of_table()
-
-
     popup.Close()
 
     return None
