@@ -4,7 +4,6 @@ import os
 import pathlib as path
 import sys
 import traceback
-from configparser import ConfigParser
 import PySimpleGUIQt as sg
 from bin.create_UI_UA import make_only_UI, make_only_UA, make_UI_and_UA, CONFIG, \
     LANGUAGE
@@ -730,9 +729,6 @@ def launch_main_window():
             # Reading user actions
             event, values = window.read()
 
-        # ToDo: Remove it (it's temporary, for debugs)
-        print('\n', event, values)
-
         # Determine which event was triggered and execute it
 
         # If the "close program" button was pressed
@@ -776,7 +772,6 @@ def launch_main_window():
 
             else:
                 popup_error(error_raport=error)
-                print(f'Some error: \nEvent {event} \nValues {values}')
 
             # Unlocking the main window, ready to accept new commands
             window.Enable()
@@ -869,18 +864,10 @@ def error_processing():
     err = sys.exc_info()[1]
     object_id = sys.exc_info()[2]
 
-    print(f'\tsys.exc_info()\t\t{sys.exc_info()}\n'
-          f'\t\ttype_err\t\t{type_err}\n'
-          f'\t\terr\t\t{err}\n'
-          f'\t\tobject_id\t\t{object_id}\n'
-          # f'\t\tsys.last_traceback\t\t{sys.last_traceback()}\n'
-          f'\t\t2sys.last_traceback\t\t{traceback.print_tb(object_id)}\n\n')
-
     if type_err == KeyError:
         return error_processing_col_names(err)
 
     elif type_err == Exception:
-        # print(f'type_err\t{type_err}\nerr\t{err}\nsys.exc_info()\t{sys.exc_info()}')
         type_err = err.args[0][0]
 
         if type_err == 'FormatError':
