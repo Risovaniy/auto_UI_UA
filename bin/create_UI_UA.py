@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import sys
 from datetime import datetime
 import locale
@@ -7,7 +8,6 @@ import pandas as pd
 import docx
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
 from docx.shared import Inches
-
 from bin.load_data import load_and_preprocessing_data, read_config_and_language
 
 #####################################################

@@ -2,10 +2,9 @@
 
 """Loading source data into a dataframe about authors and initial preprocessing
 of this dataframe"""
-import re
-import sys
-from configparser import ConfigParser
 
+import re
+from configparser import ConfigParser
 import pandas as pd
 import os.path
 from pandas_ods_reader import read_ods
