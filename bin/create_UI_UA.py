@@ -2,7 +2,7 @@
 
 import sys
 from datetime import datetime
-import locale
+# import locale
 import os
 import pandas as pd
 import docx
@@ -316,40 +316,47 @@ def generate_text_for_one(df_row, doc, organization):
     # Logic for own or not employers
     doc.add_paragraph()
 
-    if type(df_row['date_employ']) != pd._libs.tslibs.nattype.NaTType:
-        run_5_0 = doc.paragraphs[-1].add_run()
-        run_5_0.text = "☒ работником указанной организации на основании " \
-                       "трудового договора от «"
+    if "ТРИНИТИ" in df_row['job']:
+        if df_row['date_employ'] is not pd.NaT:
+            run_5_0 = doc.paragraphs[-1].add_run()
+            run_5_0.text = "☒ работником указанной организации на основании " \
+                           "трудового договора от «"
 
-        employ_date = df_row['date_employ']
+            employ_date = df_row['date_employ']
 
-        # Write a day
-        run_5_1 = doc.paragraphs[-1].add_run()
-        run_5_1.text = str(employ_date.strftime("%d"))
-        run_5_1.font.underline = True
+            # Write a day
+            run_5_1 = doc.paragraphs[-1].add_run()
+            run_5_1.text = str(employ_date.strftime("%d"))
+            run_5_1.font.underline = True
 
-        # Write the space between the day and month
-        run_5_2 = doc.paragraphs[-1].add_run()
-        run_5_2.text = "» "
+            # Write the space between the day and month
+            run_5_2 = doc.paragraphs[-1].add_run()
+            run_5_2.text = "» "
 
-        # Write a month
-        run_5_3 = doc.paragraphs[-1].add_run()
-        run_5_3.text = str(employ_date.strftime("%m"))
-        run_5_3.font.underline = True
+            # Write a month
+            run_5_3 = doc.paragraphs[-1].add_run()
+            run_5_3.text = str(employ_date.strftime("%m"))
+            run_5_3.font.underline = True
 
-        # Write the space between the month and year
-        run_5_4 = doc.paragraphs[-1].add_run()
-        run_5_4.text = " "
+            # Write the space between the month and year
+            run_5_4 = doc.paragraphs[-1].add_run()
+            run_5_4.text = " "
 
-        # Write the year
-        run_5_5 = doc.paragraphs[-1].add_run()
-        run_5_5.text = str(employ_date.year)
-        run_5_5.font.underline = True
+            # Write the year
+            run_5_5 = doc.paragraphs[-1].add_run()
+            run_5_5.text = str(employ_date.year)
+            run_5_5.font.underline = True
 
+            run_5_6 = doc.paragraphs[-1].add_run()
+            run_5_6.text = "г."
+        else:
+            run_5 = doc.paragraphs[-1].add_run()
+            run_5.text = "☒ работником указанной организации на основании " \
+                           "трудового договора от «___» ___ 20___г."
     else:
         run_5 = doc.paragraphs[-1].add_run()
         run_5.text = "☐ работником указанной организации на основании " \
-                     "трудового договора от «   »      20   "
+                     "трудового договора от «___» ___ 20___г."
 
     doc.add_paragraph()
     run_6 = doc.paragraphs[-1].add_run()
@@ -462,7 +469,8 @@ def create_df_ua_part2(df_authors):
         finish_df['name'] = finish_df['name'].\
             apply(lambda x: str(x).replace('..', '.'))
 
-        finish_df['date_UA'] = df_authors['date_UA']
+        finish_df['date_UA'] = pd.to_datetime(df_authors['date_UA'])
+
         return finish_df
 
     except KeyError:
@@ -496,11 +504,11 @@ def create_UA_docx(doc, df_UA, path_dir_to_save):
     # Processing for formatting
     font_size_hint = docx.shared.Pt(9)
 
-    # ToDo: Check it - I using month only in numbers
-    # To write a month in letters in Russian
-    locale.setlocale(locale.LC_ALL, '')
+    # # ToDo: Check it - I using month only in numbers
+    # # To write a month in letters in Russian
+    # locale.setlocale(locale.LC_ALL, '')
 
-    # Fill the table of the data
+    # Fill the table with the data
     for row in range(table_rows):
         # Short cell names of one row of the table
         cell_0 = table.cell(row, 0)
@@ -556,26 +564,19 @@ def create_UA_docx(doc, df_UA, path_dir_to_save):
 def create_sign_date(date):
     """Creating a line with the signature date in the desired design
 
-    :param date: The date of signing of the UA,If there is no value,
+    :param date: The date of signing of the UA, If there is no value,
                  then a mask is created to enter the date manually
-    :type date: str
+    :type date: pandas._libs.tslibs.timestamps.Timestamp
     :return: The date in the desired format for insertion into the table
     :rtype: str
 
     """
-    if date == '':
+    if date is pd.NaT:
         sign_date = f'Дата: «__» __ 20__г.'
 
     else:
-        try:
-            dateFormatter = "%d.%m.%y"
-            date_dt = datetime.strptime(str(date), dateFormatter)
-        except ValueError:
-            dateFormatter = "%Y-%m-%d %H:%M:%S"
-            date_dt = datetime.strptime(str(date), dateFormatter)
-
-        sign_date = f'Дата: «{date_dt.strftime("%d")}»' \
-                    f' {date_dt.strftime("%m")} {date_dt.year}г.'
+        sign_date = f'Дата: «{date.strftime("%d")}»' \
+                    f' {date.strftime("%m")} {date.year}г.'
 
     return sign_date
 

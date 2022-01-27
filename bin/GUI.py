@@ -3,6 +3,8 @@
 import os
 import pathlib as path
 import sys
+import traceback
+
 import PySimpleGUIQt as sg
 from bin.create_UI_UA import make_only_UI, make_only_UA, make_UI_and_UA, CONFIG, \
     LANGUAGE
@@ -793,14 +795,16 @@ def create_files_fault_tolerant(event, values):
 
     """
     # Catching errors when generating files (the basis is incorrect source data)
-    result = create_files(event, values)
-    # try:
-    #     result = create_files(event, values)
-    #     return result
-    #
-    # except:
-    #     print(f'\tsys.exc_info()\n{sys.exc_info()}\n')
-    #     return error_processing()
+    # result = create_files(event, values)
+    try:
+        result = create_files(event, values)
+        return result
+
+    except:
+        error = sys.exc_info()
+        print(f'\tsys.exc_info()\n{error}\n')
+              # f'\ttraceback\n{traceback()}\n\n')
+        return error_processing()
 
 
 def create_files(event, values):

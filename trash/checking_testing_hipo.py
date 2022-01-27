@@ -1,53 +1,40 @@
-import PySimpleGUIQt as sg
+import pandas as pd
+from pandas import NaT
+
+df = pd.read_excel('right_data.xls')
+
+print('Before',df,type(df['Дата подписания УА'].iloc[-1]),type(df['Дата подписания УА'].iloc[0]))
+
+df = df.fillna('')
+#
+# print('\nAfter fillna',df,type(df['Дата подписания УА'].iloc[-1]),type(df['Дата подписания УА'].iloc[0]))
+df['Дата подписания УА'] = pd.to_datetime(df['Дата подписания УА'])
+print('\nAfter to datetime',df,type(df['Дата подписания УА'].iloc[-1]),type(df['Дата подписания УА'].iloc[0]))
 
 
-def a():
-    headings = ['Имя', 'Фамилия', 'Отчество', 'ученое звание',
+# df = df.fillna('')
+#
+# print('\nAfter to datetime',df,type(df['Дата подписания УА'].iloc[-1]),type(df['Дата подписания УА'].iloc[0]))
 
-                'Контракт/договор', 'Творческий вклад', 'Должность',
+# df['Дата подписания УА'] = df['Дата подписания УА'].replace({pd.NaT: ''})
+#     # apply(lambda x: '///' if x is pd.NaT else x)
+# print('\n\tAfter to datetime\n',df,type(df['Дата подписания УА'].iloc[-1]),type(df['Дата подписания УА'].iloc[0]))
+# df['Дата подписания УА'] = df['Дата подписания УА'].apply(lambda x: '' if x == 'NaT' else x)
+#
+# print('\n\tAfter to datetime\n',df,type(df['Дата подписания УА'].iloc[-1]),type(df['Дата подписания УА'].iloc[0]))
 
-                'Место работы', 'Дата трудоустройства',
+if df['Дата подписания УА'].iloc[-1] is pd.NaT:
+    print('rrr',df['Дата подписания УА'].iloc[1])
 
-                'Дата подписания УА']
+print(df['Дата подписания УА'].iloc[0] is True)
 
-    # Examples of correct data
+date_dt = df['Дата подписания УА'].iloc[0]
+sign_date = f'Дата: «{date_dt.strftime("%d")}»' \
+                    f' {date_dt.strftime("%m")} {date_dt.year}г.'
 
-    values = [['Дмитрий', 'Комаров', 'Петрович', 'д-р физ.-мат. наук',
+print(sign_date)
 
-               'договором № 123 от 01.01.2020', 'введение, заключение',
+a = "АО «ГНЦ РФ ТРИНИТИ»"
+s = 'ТРИНИТИ'
 
-               'директор отделения', 'АО «ГНЦ РФ ТРИНИТИ»', '21.10.17',
-
-               '01.08.18'],
-
-              ['Анна', 'Топоркова', '', 'канд. физ.-мат. наук',
-
-               'договором № 123 от 01.01.2020', 'разделы 1, 2',
-
-               'ведущий инженер', 'АО «ГНЦ РФ ТРИНИТИ»', '21.08.18',
-
-               '01.08.20'],
-
-              ['Юрий', 'Иванов', 'Сергеевич', 'д-р техн. наук',
-
-               'договором № 321 от 01.01.2020', 'разделы 2-4',
-
-               'главный научный сотрудник', 'ФГУП «РФЯЦ — ВНИИЭФ»', '',
-
-               '01.01.22'],
-
-              ['Алексей', 'Ковалев', '', 'канд. хим. наук',
-
-               'договором № 321 от 01.01.2020', 'раздел 2',
-
-               'старший научный сотрудник', 'ФГУП «РФЯЦ — ВНИИЭФ»', '',
-
-               '01.01.22']]
-
-    # Creating a layout with a table only
-
-    layout = [[sg.Table(values=values, headings=headings)]]
-
-    return layout
-
-print(type(a()))
+print(s in a)
