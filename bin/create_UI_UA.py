@@ -424,7 +424,7 @@ def generate_text_for_one(df_row, doc, organization):
     return doc
 
 
-def create_doc_with_UA_1part(df_authors):
+def create_doc_with_ua_1part(df_authors):
     """Creating the text part of the UA in a doc file, by all authors
 
     :param df_authors: Prepared dataframe with authors data for the text block
@@ -593,7 +593,7 @@ def generate_file_UA(df_authors, dir_for_save=''):
 
     """
     # Create doc with text part of UA
-    doc_with_text_UA = create_doc_with_UA_1part(df_authors)
+    doc_with_text_UA = create_doc_with_ua_1part(df_authors)
 
     # Adding the table create_df_ua_part2(df_in)
 

@@ -30,8 +30,8 @@ Works in graphical mode
 
 - PySimpleGUIQt
   - implementation of all graphical interface
-  - pip install PySimpleGUIQt
   - PySide - following package
+  - pip install PySimpleGUIQt
 
 - datetime 
   - working with dates

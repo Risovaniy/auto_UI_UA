@@ -3,7 +3,7 @@
 import os
 import pathlib as path
 import sys
-import traceback
+# import traceback
 
 import PySimpleGUIQt as sg
 from bin.create_UI_UA import make_only_UI, make_only_UA, make_UI_and_UA, CONFIG, \
