@@ -27,7 +27,7 @@ def read_config_and_language():
 
     # parse existing file (c - config)
 
-    config.read('./resources/config.ini')
+    config.read('./resources/config.ini', encoding='utf-8')
 
     # read the language selected by the user (l - language)
     language = (config.get('LOCALLY', "-language-")).upper()
@@ -166,7 +166,7 @@ def del_1_and_last_whitespaces_in_all_df(df_raw):
 
     # Remove leading and ending whitespace characters from features
     for col in df_raw.columns:
-        df_raw[col] = df_raw[col].str.strip()
+        df_raw[col] = df_raw[col].apply(lambda element: str(element).strip())
 
     return df_raw
 

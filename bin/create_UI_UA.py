@@ -496,6 +496,7 @@ def create_UA_docx(doc, df_UA, path_dir_to_save):
     # Processing for formatting
     font_size_hint = docx.shared.Pt(9)
 
+    # ToDo: Check it - I using month only in numbers
     # To write a month in letters in Russian
     locale.setlocale(locale.LC_ALL, '')
 
@@ -566,9 +567,15 @@ def create_sign_date(date):
         sign_date = f'Дата: «__» __ 20__г.'
 
     else:
-        dateFormatter = "%d.%m.%y"
-        date = datetime.strptime(str(date), dateFormatter)
-        sign_date = f'Дата: «{date.strftime("%d")}» {date.strftime("%m")} {date.year}г.'
+        try:
+            dateFormatter = "%d.%m.%y"
+            date_dt = datetime.strptime(str(date), dateFormatter)
+        except ValueError:
+            dateFormatter = "%Y-%m-%d %H:%M:%S"
+            date_dt = datetime.strptime(str(date), dateFormatter)
+
+        sign_date = f'Дата: «{date_dt.strftime("%d")}»' \
+                    f' {date_dt.strftime("%m")} {date_dt.year}г.'
 
     return sign_date
 

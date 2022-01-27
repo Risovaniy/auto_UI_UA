@@ -322,7 +322,7 @@ def create_popup_manual_input_data(text='',
                                    icon=GLOBAL_ICON,
                                    font=('Arial', 14),
                                    keep_on_top=True,
-                                   location=(600, 400)
+                                   location=(400, 200)
                                    ):
     """Create a popup with manual for input data
 
@@ -377,7 +377,7 @@ def create_popup_manual_input_data(text='',
             location=location,
             resizable=True,
             keep_on_top=keep_on_top,
-            size=(600, 400),
+            size=(800, 600),
             )
 
     return window
@@ -619,6 +619,10 @@ def launch_main_window():
             # Reading user actions
             event, values = window.read()
 
+        print(f'\tevent\n{event}\n'
+              f'\tvalues\n{values}\n'
+              f'\tsys.exc_info()\n{sys.exc_info()}\n\n')
+
         # Determine which event was triggered and execute it
 
         # If the "close program" button was pressed
@@ -789,12 +793,14 @@ def create_files_fault_tolerant(event, values):
 
     """
     # Catching errors when generating files (the basis is incorrect source data)
-    try:
-        result = create_files(event, values)
-        return result
-
-    except:
-        return error_processing()
+    result = create_files(event, values)
+    # try:
+    #     result = create_files(event, values)
+    #     return result
+    #
+    # except:
+    #     print(f'\tsys.exc_info()\n{sys.exc_info()}\n')
+    #     return error_processing()
 
 
 def create_files(event, values):
