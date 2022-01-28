@@ -1,49 +1,50 @@
-import pandas as pd
-from pandas import NaT
-
-df = pd.read_excel('right_data.xls')
-
-print('Before',df,type(df['Дата подписания УА'].iloc[-1]),type(df['Дата подписания УА'].iloc[0]))
-
-df = df.fillna('')
-#
-# print('\nAfter fillna',df,type(df['Дата подписания УА'].iloc[-1]),type(df['Дата подписания УА'].iloc[0]))
-df['Дата подписания УА'] = pd.to_datetime(df['Дата подписания УА'])
-print('\nAfter to datetime',df,type(df['Дата подписания УА'].iloc[-1]),type(df['Дата подписания УА'].iloc[0]))
+import docx
+from docx.shared import Inches
 
 
-# df = df.fillna('')
-#
-# print('\nAfter to datetime',df,type(df['Дата подписания УА'].iloc[-1]),type(df['Дата подписания УА'].iloc[0]))
+def open_docx_file(path):
+    return docx.Document(path)
 
-# df['Дата подписания УА'] = df['Дата подписания УА'].replace({pd.NaT: ''})
-#     # apply(lambda x: '///' if x is pd.NaT else x)
-# print('\n\tAfter to datetime\n',df,type(df['Дата подписания УА'].iloc[-1]),type(df['Дата подписания УА'].iloc[0]))
-# df['Дата подписания УА'] = df['Дата подписания УА'].apply(lambda x: '' if x == 'NaT' else x)
-#
-# print('\n\tAfter to datetime\n',df,type(df['Дата подписания УА'].iloc[-1]),type(df['Дата подписания УА'].iloc[0]))
-
-if df['Дата подписания УА'].iloc[-1] is pd.NaT:
-    print('rrr',df['Дата подписания УА'].iloc[1])
-
-print(df['Дата подписания УА'].iloc[0] is True)
-
-date_dt = df['Дата подписания УА'].iloc[0]
-sign_date = f'Дата: «{date_dt.strftime("%d")}»' \
-                    f' {date_dt.strftime("%m")} {date_dt.year}г.'
-
-print(sign_date)
-
-a = "АО «ГНЦ РФ ТРИНИТИ»"
-s = 'ТРИНИТИ'
-df['j'] = ''
+    # return doc
 
 
-print(df)
-df.j[df['Дата подписания УА'] is pd.NaT] = 'ТРИНИТИ'
-# df.iloc[i].j = 'ТРИНИТИ'
+if __name__ == '__main__':
+    doc = open_docx_file('/home/risovaniy/auto_UI_UA/resources/UA_template.docx')
+    doc2 = open_docx_file('/home/risovaniy/auto_UI_UA/resources/UA_template.docx')
 
-print(df)
+    doc.styles['Normal'].font.name = 'Times New Roman'
+    doc.styles['Normal'].font.size = docx.shared.Pt(12)
 
-# print(s in a)
+    doc.add_paragraph()
 
+    # First number is the paragraph, second number - run in this paragraph
+    run_0_0 = doc.paragraphs[-1].add_run()
+    run_0_0.text = "Я, "
+
+    run_0_1 = doc.paragraphs[-1].add_run()
+    run_0_1.text = f"\t\tМоя информация строка 670\t\t\t\t\t,"
+    run_0_1.font.underline = True
+
+    doc.add_paragraph()
+
+    # doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
+    run_1 = doc.paragraphs[-1].add_run()
+    run_1.text = "(ФИО автора)"
+    run_1.font.size = docx.shared.Pt(10)  # 8 it is just for tests
+
+    doc.add_paragraph()
+
+    run_2_0 = doc.paragraphs[-1].add_run()
+    run_2_0.text = "настоящим уведомляю "
+
+    [doc.add_paragraph()]*5
+
+    # parag = doc.paragraphs[-1]
+    # parag.text = doc2
+    print(f'\tЯ, ____\n{doc.paragraphs[3].text}\n\n'
+          f'\tНаименование созданного РИД:\n{doc.paragraphs[-45].text}')
+
+
+    input()
+
+    doc.save('/home/risovaniy/auto_UI_UA/trash/my_first_test.docx')
