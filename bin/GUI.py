@@ -3,11 +3,9 @@
 import os
 import pathlib as path
 import sys
-# import traceback
-
 import PySimpleGUIQt as sg
-from bin.create_UI_UA import make_only_UI, make_only_UA, make_UI_and_UA, CONFIG, \
-    LANGUAGE
+from bin.create_UI_UA import make_only_ui, make_only_UA, make_ui_and_ua, \
+    CONFIG, LANGUAGE
 
 # Location of my global icon
 GLOBAL_ICON = str(f"{path.Path.cwd()}{os.sep}resources{os.sep}global_icon.png")
@@ -70,7 +68,7 @@ def popup_are_you_sure(text='Just text',
                    font=font
                    )
          ]
-        ]
+    ]
 
     # Create the popup
     popup_yes_no = sg.Window(title=title,
@@ -91,7 +89,7 @@ def popup_are_you_sure(text='Just text',
     return True if event == buttons_text[0] else False
 
 
-def popup_Ok(text='',
+def popup_ok(text='',
              title='Main title',
              buttons_text='Ok',
              buttons_size=(150, 40),
@@ -144,24 +142,24 @@ def popup_Ok(text='',
                    font=font,
                    )
          ]
-        ]
+    ]
 
     # Create the popup
-    window_Ok = sg.Window(
-            title=title,
-            layout=layout,
-            icon=icon,
-            location=location,
-            resizable=False,
-            grab_anywhere=grab_anywhere,
-            keep_on_top=keep_on_top,
-            )
+    window_ok = sg.Window(
+        title=title,
+        layout=layout,
+        icon=icon,
+        location=location,
+        resizable=False,
+        grab_anywhere=grab_anywhere,
+        keep_on_top=keep_on_top,
+    )
 
     # Show the popup
-    window_Ok.Show()
+    window_ok.Show()
 
     # Close the popup
-    window_Ok.Close()
+    window_ok.Close()
 
     return None
 
@@ -306,15 +304,15 @@ def popup_long_text(text='',
     ]
     # Create the popup
     window = sg.Window(
-            title=title,
-            layout=layout,
-            icon=icon,
-            location=location,
-            resizable=True,
-            grab_anywhere=grab_anywhere,
-            keep_on_top=keep_on_top,
-            size=(600, 400),
-            )
+        title=title,
+        layout=layout,
+        icon=icon,
+        location=location,
+        resizable=True,
+        grab_anywhere=grab_anywhere,
+        keep_on_top=keep_on_top,
+        size=(600, 400),
+    )
 
     return window
 
@@ -373,14 +371,14 @@ def create_popup_manual_input_data(text='',
     ]
     # Create the popup
     window = sg.Window(
-            title=title,
-            layout=layout,
-            icon=icon,
-            location=location,
-            resizable=True,
-            keep_on_top=keep_on_top,
-            size=(800, 600),
-            )
+        title=title,
+        layout=layout,
+        icon=icon,
+        location=location,
+        resizable=True,
+        keep_on_top=keep_on_top,
+        size=(800, 600),
+    )
 
     return window
 
@@ -437,10 +435,10 @@ def popup_error(error_report):
     title = CONFIG.get(LANGUAGE, '-n_popup_error-')
     buttons_text = CONFIG.get(LANGUAGE, '-b_close-')
 
-    return popup_Ok(text=error_report, title=title, buttons_text=buttons_text)
+    return popup_ok(text=error_report, title=title, buttons_text=buttons_text)
 
 
-def popup_success(buttons_size=(70, 40), grab_anywhere=True,):
+def popup_success(buttons_size=(70, 40), grab_anywhere=True, ):
     """Show a window signaling the successful completion of the program
 
     :param buttons_size: Tuple of button sizes in pixels (width, height)
@@ -570,7 +568,7 @@ def create_main_layout():
                    font=('Arial', 12),
                    )
          ],
-        ]
+    ]
 
     return main_layout
 
@@ -587,12 +585,12 @@ def create_main_window():
     sg.ChangeLookAndFeel(CONFIG.get('THEMES', "-theme_global-"))
     # Create the Window
     window = sg.Window(
-            title=CONFIG.get(LANGUAGE, '-n_main_window-'),
-            layout=create_main_layout(),
-            icon=GLOBAL_ICON,
-            location=(300, 200),
-            grab_anywhere=True,
-            )
+        title=CONFIG.get(LANGUAGE, '-n_main_window-'),
+        layout=create_main_layout(),
+        icon=GLOBAL_ICON,
+        location=(300, 200),
+        grab_anywhere=True,
+    )
 
     return window
 
@@ -620,10 +618,6 @@ def launch_main_window():
         else:
             # Reading user actions
             event, values = window.read()
-
-        print(f'\tevent\n{event}\n'
-              f'\tvalues\n{values}\n'
-              f'\tsys.exc_info()\n{sys.exc_info()}\n\n')
 
         # Determine which event was triggered and execute it
 
@@ -801,9 +795,9 @@ def create_files_fault_tolerant(event, values):
         return result
 
     except:
-        error = sys.exc_info()
-        print(f'\tsys.exc_info()\n{error}\n')
-              # f'\ttraceback\n{traceback()}\n\n')
+        print(f'\tevent\n{event}\n'
+              f'\tvalues\n{values}\n'
+              f'\tsys.exc_info()\n{sys.exc_info()}\n\n')
         return error_processing()
 
 
@@ -830,19 +824,20 @@ def create_files(event, values):
     # The key that informs about the success of the function
     if popup_are_you_sure(text=question,
                           title=CONFIG.get(LANGUAGE,
-                                     str(event).replace('-b_create_', '-n_sure_')
-                                     ),
+                                           str(event).replace('-b_create_',
+                                                              '-n_sure_')
+                                           ),
                           buttons_text=(CONFIG.get(LANGUAGE, '-b_yes-'),
-                                  CONFIG.get(LANGUAGE, '-b_no-')),
+                                        CONFIG.get(LANGUAGE, '-b_no-')),
                           ):
         if event == '-b_create_UI-':
-            make_only_UI(path_input_data, path_output_dir)
+            make_only_ui(path_input_data, path_output_dir)
 
         elif event == '-b_create_UA-':
             make_only_UA(path_input_data, path_output_dir)
 
         elif event == '-b_create_UI_and_UA-':
-            make_UI_and_UA(path_input_data, path_output_dir)
+            make_ui_and_ua(path_input_data, path_output_dir)
 
         return True
 

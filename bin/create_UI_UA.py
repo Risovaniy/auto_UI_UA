@@ -29,7 +29,6 @@ def create_docx_fmt():
     # Initial Document object
     new_doc = docx.Document()
 
-
     # Specify the main name and font size for the document
     new_doc.styles['Normal'].font.name = 'Times New Roman'
     new_doc.styles['Normal'].font.size = docx.shared.Pt(12)
@@ -117,7 +116,8 @@ def create_df_ui(df_authors):
         finish_df = pd.DataFrame()
 
         # Create the first column "serial number"
-        finish_df['number'] = pd.Series(range(1, len(df_authors) + 1)).astype(str)
+        finish_df['number'] = pd.Series(range(1, len(df_authors) + 1)).astype(
+            str)
 
         # Create the full names of authors (ФИО)
         finish_df['full_name'] = df_authors['last_name'] + "\n" + \
@@ -158,11 +158,11 @@ def del_end_comma(element):
     return element
 
 
-def create_UI_docx(df_UI, path_dir_to_save):
+def create_ui_docx(df_ui, path_dir_to_save):
     """Create a document (.docx) for UI and fill this doc a data about authors
 
-    :param df_UI: Dataframe with special processing info about authors for UI
-    :type df_UI: pandas.core.frame.DataFrame
+    :param df_ui: Dataframe with special processing info about authors for UI
+    :type df_ui: pandas.core.frame.DataFrame
     :param path_dir_to_save: The path to the directory to save the created files
     :type path_dir_to_save: str
     :return: Save 'table_for_UI.docx' document
@@ -173,7 +173,7 @@ def create_UI_docx(df_UI, path_dir_to_save):
     doc = create_docx_fmt()
 
     # Set a shape of the table
-    table_rows, table_cols = df_UI.shape
+    table_rows, table_cols = df_ui.shape
 
     # Initial the table
     my_table = doc.add_table(rows=(table_rows + 1), cols=table_cols)
@@ -192,7 +192,7 @@ def create_UI_docx(df_UI, path_dir_to_save):
             cell = my_table.cell((row + 1), col)
 
             # Write our data into cell
-            cell.text = df_UI.iloc[row, col]
+            cell.text = df_ui.iloc[row, col]
 
             # Center alignment of text inside a special cell (first and last)
             if col in (0, 3):
@@ -205,7 +205,7 @@ def create_UI_docx(df_UI, path_dir_to_save):
     doc.save(f"{path_dir_to_save}{os.sep}{current_name}{created_date}.docx")
 
 
-def generate_file_UI(df_authors, dir_for_save=''):
+def generate_file_ui(df_authors, dir_for_save=''):
     """The finished function for the full cycle of UI generation
 
     :param df_authors: A row dataframe with info about authors
@@ -221,7 +221,7 @@ def generate_file_UI(df_authors, dir_for_save=''):
 
     # Create UI.docx file with generated table for copying in the main UI
 
-    create_UI_docx(df_UI, dir_for_save)
+    create_ui_docx(df_UI, dir_for_save)
 
 
 #####################################################
@@ -255,6 +255,13 @@ def create_df_ua_part1(df_authors):
 
         # Contribution of each authors in the total result
         finish_df['contribution'] = df_authors['contribution']
+
+        # Create column - does the author work at TRINITI
+        if 'job' in df_authors.columns:
+            finish_df['job'] = df_authors['job']
+        else:
+            finish_df['job'] = ''
+            finish_df.job[finish_df['date_employ'] != ''] = 'ТРИНИТИ'
 
         return finish_df
     except KeyError:
@@ -352,7 +359,7 @@ def generate_text_for_one(df_row, doc, organization):
         else:
             run_5 = doc.paragraphs[-1].add_run()
             run_5.text = "☒ работником указанной организации на основании " \
-                           "трудового договора от «___» ___ 20___г."
+                         "трудового договора от «___» ___ 20___г."
     else:
         run_5 = doc.paragraphs[-1].add_run()
         run_5.text = "☐ работником указанной организации на основании " \
@@ -466,7 +473,7 @@ def create_df_ua_part2(df_authors):
                             [x[:1] for x in df_authors['first_name']] + '.' + \
                             [x[:1] for x in df_authors['middle_name']] + '.'
         # Remove double dot for events when not exist a middle name
-        finish_df['name'] = finish_df['name'].\
+        finish_df['name'] = finish_df['name']. \
             apply(lambda x: str(x).replace('..', '.'))
 
         finish_df['date_UA'] = pd.to_datetime(df_authors['date_UA'])
@@ -477,13 +484,13 @@ def create_df_ua_part2(df_authors):
         raise KeyError(sys.exc_info())
 
 
-def create_UA_docx(doc, df_UA, path_dir_to_save):
+def create_ua_docx(doc, df_ua, path_dir_to_save):
     """Add the table in UA and save the result UA document (both text and table)
 
     :param doc: Doc with added text by authors
     :type doc: docx.document.Document
-    :param df_UA: Prepared dataframe with authors data for the table
-    :type df_UA: pandas.core.frame.DataFrame
+    :param df_ua: Prepared dataframe with authors data for the table
+    :type df_ua: pandas.core.frame.DataFrame
     :param path_dir_to_save: The path to the directory to save the created doc
     :type path_dir_to_save: str
     :return: Saves the created UA document (both text and table)
@@ -491,10 +498,10 @@ def create_UA_docx(doc, df_UA, path_dir_to_save):
 
     """
     # Space between the text about the authors and the table with signatures
-    [doc.add_paragraph()]*5
+    [doc.add_paragraph()] * 5
 
     # Calculate a shape of the table
-    count_authors = df_UA.shape[0]
+    count_authors = df_ua.shape[0]
     table_rows = count_authors * 3
     table_cols = 3
 
@@ -503,10 +510,6 @@ def create_UA_docx(doc, df_UA, path_dir_to_save):
 
     # Processing for formatting
     font_size_hint = docx.shared.Pt(9)
-
-    # # ToDo: Check it - I using month only in numbers
-    # # To write a month in letters in Russian
-    # locale.setlocale(locale.LC_ALL, '')
 
     # Fill the table with the data
     for row in range(table_rows):
@@ -528,7 +531,7 @@ def create_UA_docx(doc, df_UA, path_dir_to_save):
             cell_1.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
             run_1 = cell_1.paragraphs[0].add_run()
             # Filling a cell with text
-            run_1.text = df_UA['name'].iloc[int(row / 3)]
+            run_1.text = df_ua['name'].iloc[int(row / 3)]
             # Make underline at the name of an author
             run_1.font.underline = True
 
@@ -536,7 +539,8 @@ def create_UA_docx(doc, df_UA, path_dir_to_save):
             cell_2.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
             run_2 = cell_2.paragraphs[0].add_run()
             # Filling a cell with text
-            run_2.text = create_sign_date(date=df_UA['date_UA'].iloc[int(row / 3)])
+            run_2.text = create_sign_date(
+                date=df_ua['date_UA'].iloc[int(row / 3)])
 
         elif (row + 1) % 3 == 2:
 
@@ -581,7 +585,7 @@ def create_sign_date(date):
     return sign_date
 
 
-def generate_file_UA(df_authors, dir_for_save=''):
+def generate_file_ua(df_authors, dir_for_save=''):
     """Creating the UA doc file based on the authors' data
 
     :param df_authors: The original dataframe with all the info about the authors
@@ -597,11 +601,11 @@ def generate_file_UA(df_authors, dir_for_save=''):
 
     # Adding the table create_df_ua_part2(df_in)
 
-    create_UA_docx(doc_with_text_UA, create_df_ua_part2(df_authors),
+    create_ua_docx(doc_with_text_UA, create_df_ua_part2(df_authors),
                    dir_for_save)
 
 
-def make_UI_and_UA(path_to_authors_data, dir_for_save_file):
+def make_ui_and_ua(path_to_authors_data, dir_for_save_file):
     """Launch creating UI and UA
 
     :param path_to_authors_data: The path to the source data about the authors
@@ -614,11 +618,11 @@ def make_UI_and_UA(path_to_authors_data, dir_for_save_file):
     """
     df_in = load_and_preprocessing_data(path_to_authors_data)
 
-    generate_file_UI(df_in, dir_for_save=dir_for_save_file)
-    generate_file_UA(df_in, dir_for_save=dir_for_save_file)
+    generate_file_ui(df_in, dir_for_save=dir_for_save_file)
+    generate_file_ua(df_in, dir_for_save=dir_for_save_file)
 
 
-def make_only_UI(path_to_authors_data, dir_for_save_file):
+def make_only_ui(path_to_authors_data, dir_for_save_file):
     """Launch creating only UI
 
     :param path_to_authors_data: The path to the source data about the authors
@@ -631,7 +635,7 @@ def make_only_UI(path_to_authors_data, dir_for_save_file):
     """
     df_in = load_and_preprocessing_data(path_to_authors_data)
 
-    generate_file_UI(df_in, dir_for_save_file)
+    generate_file_ui(df_in, dir_for_save_file)
 
 
 def make_only_UA(path_to_authors_data, dir_for_save_file):
@@ -647,4 +651,4 @@ def make_only_UA(path_to_authors_data, dir_for_save_file):
     """
     df_in = load_and_preprocessing_data(path_to_authors_data)
 
-    generate_file_UA(df_in, dir_for_save=dir_for_save_file)
+    generate_file_ua(df_in, dir_for_save=dir_for_save_file)

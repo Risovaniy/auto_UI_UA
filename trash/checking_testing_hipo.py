@@ -36,5 +36,14 @@ print(sign_date)
 
 a = "АО «ГНЦ РФ ТРИНИТИ»"
 s = 'ТРИНИТИ'
+df['j'] = ''
 
-print(s in a)
+
+print(df)
+df.j[df['Дата подписания УА'] is pd.NaT] = 'ТРИНИТИ'
+# df.iloc[i].j = 'ТРИНИТИ'
+
+print(df)
+
+# print(s in a)
+

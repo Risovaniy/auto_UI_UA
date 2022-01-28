@@ -91,14 +91,14 @@ def load_file_to_df(full_filename, separator=';'):
     if check_exists_file(full_filename):
         extension = extract_extension_from_filename(full_filename)
         if extension:
-            office_MS_extension = ['xlsx', 'xls', 'xlsm', 'xlsb']
-            office_Open_extension = ['ods', 'odt', 'xods', 'xots']
+            office_ms_extension = ['xlsx', 'xls', 'xlsm', 'xlsb']
+            office_open_extension = ['ods', 'odt', 'xods', 'xots']
             csv_extension = ['csv', 'txt']
 
-            if extension in office_MS_extension:
+            if extension in office_ms_extension:
                 return pd.read_excel(full_filename)
 
-            elif extension in office_Open_extension:
+            elif extension in office_open_extension:
                 return read_ods(full_filename)
 
             elif extension in csv_extension:
@@ -106,17 +106,22 @@ def load_file_to_df(full_filename, separator=';'):
 
             else:
                 # Unsupported a file format
-                error_info = ('FormatError', extension, 'fn: load_file_to_df; The 2th "if"')
+                error_info = (
+                    'FormatError', extension,
+                    'fn: load_file_to_df; The 2th "if"')
                 raise Exception(error_info)
 
         else:
             # It was not possible to get its extension from the full file path
-            error_info = ('ExtensionError', full_filename, 'fn: load_file_to_df; The 1th "if"')
+            error_info = ('ExtensionError', full_filename,
+                          'fn: load_file_to_df; The 1th "if"')
             raise Exception(error_info)
 
     else:
         # The file specified by this path does not exist
-        error_info = ('FileNotFoundError', full_filename, 'fn: load_file_to_df; Outside "if"')
+        error_info = (
+            'FileNotFoundError', full_filename,
+            'fn: load_file_to_df; Outside "if"')
         raise Exception(error_info)
 
 
@@ -132,15 +137,15 @@ def rename_columns(df_raw):
     # Dictionary for unambiguous renaming of columns, so as not to depend on
     # the order of the columns themselves
     dict_for_renaming = {'фамилия': 'last_name',
-                             'имя': 'first_name',
-                        'отчество': 'middle_name',
-                       'должность': 'post',
-                   'ученое звание': 'academic',
-                    'место работы': 'job',
-                'творческий вклад': 'contribution',
-                'контракт/договор': 'contract',
-              'дата подписания уа': 'date_UA',
-            'дата трудоустройства': 'date_employ'}
+                         'имя': 'first_name',
+                         'отчество': 'middle_name',
+                         'должность': 'post',
+                         'ученое звание': 'academic',
+                         'место работы': 'job',
+                         'творческий вклад': 'contribution',
+                         'контракт/договор': 'contract',
+                         'дата подписания уа': 'date_UA',
+                         'дата трудоустройства': 'date_employ'}
 
     # Removing the case dependency
     df_raw.columns = df_raw.columns.str.lower()
@@ -171,7 +176,6 @@ def del_1_and_last_whitespaces_in_all_df(df_raw):
     return df_raw
 
 
-
 def all_preprocessing_df(df_raw):
     """Starting preprocessing of a raw dataframe with data about authors
 
@@ -181,9 +185,9 @@ def all_preprocessing_df(df_raw):
     :rtype: pandas.core.frame.DataFrame
 
     """
-    result = del_1_and_last_whitespaces_in_all_df(df_raw)
+    result = df_raw.fillna('')
 
-    result = result.fillna('')
+    result = del_1_and_last_whitespaces_in_all_df(result)
 
     result = rename_columns(result)
 
