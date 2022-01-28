@@ -256,13 +256,6 @@ def create_df_ua_part1(df_authors):
         # Contribution of each authors in the total result
         finish_df['contribution'] = df_authors['contribution']
 
-        # Create column - does the author work at TRINITI
-        if 'job' in df_authors.columns:
-            finish_df['job'] = df_authors['job']
-        else:
-            finish_df['job'] = ''
-            finish_df.job[finish_df['date_employ'] != ''] = 'ТРИНИТИ'
-
         return finish_df
     except KeyError:
         raise KeyError(sys.exc_info())
@@ -323,43 +316,38 @@ def generate_text_for_one(df_row, doc, organization):
     # Logic for own or not employers
     doc.add_paragraph()
 
-    if "ТРИНИТИ" in df_row['job']:
-        if df_row['date_employ'] is not pd.NaT:
-            run_5_0 = doc.paragraphs[-1].add_run()
-            run_5_0.text = "☒ работником указанной организации на основании " \
-                           "трудового договора от «"
+    if df_row['date_employ'] is not pd.NaT:
+        run_5_0 = doc.paragraphs[-1].add_run()
+        run_5_0.text = "☒ работником указанной организации на основании " \
+                       "трудового договора от «"
 
-            employ_date = df_row['date_employ']
+        employ_date = df_row['date_employ']
 
-            # Write a day
-            run_5_1 = doc.paragraphs[-1].add_run()
-            run_5_1.text = str(employ_date.strftime("%d"))
-            run_5_1.font.underline = True
+        # Write a day
+        run_5_1 = doc.paragraphs[-1].add_run()
+        run_5_1.text = str(employ_date.strftime("%d"))
+        run_5_1.font.underline = True
 
-            # Write the space between the day and month
-            run_5_2 = doc.paragraphs[-1].add_run()
-            run_5_2.text = "» "
+        # Write the space between the day and month
+        run_5_2 = doc.paragraphs[-1].add_run()
+        run_5_2.text = "» "
 
-            # Write a month
-            run_5_3 = doc.paragraphs[-1].add_run()
-            run_5_3.text = str(employ_date.strftime("%m"))
-            run_5_3.font.underline = True
+        # Write a month
+        run_5_3 = doc.paragraphs[-1].add_run()
+        run_5_3.text = str(employ_date.strftime("%m"))
+        run_5_3.font.underline = True
 
-            # Write the space between the month and year
-            run_5_4 = doc.paragraphs[-1].add_run()
-            run_5_4.text = " "
+        # Write the space between the month and year
+        run_5_4 = doc.paragraphs[-1].add_run()
+        run_5_4.text = " "
 
-            # Write the year
-            run_5_5 = doc.paragraphs[-1].add_run()
-            run_5_5.text = str(employ_date.year)
-            run_5_5.font.underline = True
+        # Write the year
+        run_5_5 = doc.paragraphs[-1].add_run()
+        run_5_5.text = str(employ_date.year)
+        run_5_5.font.underline = True
 
-            run_5_6 = doc.paragraphs[-1].add_run()
-            run_5_6.text = "г."
-        else:
-            run_5 = doc.paragraphs[-1].add_run()
-            run_5.text = "☒ работником указанной организации на основании " \
-                         "трудового договора от «___» ___ 20___г."
+        run_5_6 = doc.paragraphs[-1].add_run()
+        run_5_6.text = "г."
     else:
         run_5 = doc.paragraphs[-1].add_run()
         run_5.text = "☐ работником указанной организации на основании " \
