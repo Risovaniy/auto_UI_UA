@@ -290,7 +290,7 @@ def generate_text_for_one(df_row, doc, organization):
     doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
     run_1 = doc.paragraphs[-1].add_run()
     run_1.text = "(ФИО автора)"
-    # run_1.font = docx.shared.Pt(10)
+    run_1.font.size = docx.shared.Pt(10)  # 8 it is just for tests
 
     doc.add_paragraph()
 
@@ -305,8 +305,8 @@ def generate_text_for_one(df_row, doc, organization):
 
     doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
     run_3 = doc.paragraphs[-1].add_run()
-    run_3.text = "(название Организации)"
-    # run_3.font = docx.shared.Pt(10)
+    run_3.text = "(название организации)"
+    run_3.font.size = docx.shared.Pt(10)  # 8 it is just for tests
 
     doc.add_paragraph()
 
@@ -366,7 +366,7 @@ def generate_text_for_one(df_row, doc, organization):
     doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
     run_8 = doc.paragraphs[-1].add_run()
     run_8.text = "(номера пунктов трудового договора и / или должностной инструкции)"
-    # run_8.font = docx.shared.Pt(10)
+    run_8.font.size = docx.shared.Pt(10)
 
     doc.add_paragraph()
     run_9 = doc.paragraphs[-1].add_run()
@@ -388,6 +388,7 @@ def generate_text_for_one(df_row, doc, organization):
     doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
     run_11 = doc.paragraphs[-1].add_run()
     run_11.text = "(наименование документа, регламентирующего выданное работнику задание)"
+    run_11.font.size = docx.shared.Pt(10)
 
     doc.add_paragraph()
     run_12 = doc.paragraphs[-1].add_run()
@@ -413,8 +414,7 @@ def generate_text_for_one(df_row, doc, organization):
     run_14_2.text = "_____________________________"
 
     # White spaces x2
-    doc.add_paragraph()
-    doc.add_paragraph()
+    [doc.add_paragraph()] * 2
 
     return doc
 
@@ -541,7 +541,9 @@ def create_ua_docx(doc, df_ua, path_dir_to_save):
 
             # Filling cells with text
             run_0.text = '(подпись)'
+            run_0.font.size = docx.shared.Pt(10)
             run_1.text = '(Фамилия И. О.)'
+            run_1.font.size = docx.shared.Pt(10)
 
             # Setting the font size of the cell text
             run_0.font.size = font_size_hint
