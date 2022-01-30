@@ -66,39 +66,41 @@ def create_table_fmt(document, count_rows, count_cols):
 #                   UI LOGIC                        #
 #                                                   #
 #####################################################
-def create_column_names_ui(current_table):
-    """Create names for column in table of UI, prepare a table to filling.
-
-    :param current_table: The empty table with styles and simple formatting
-    :type current_table: docx.table.Table
-    :return: The table with the correct names of the columns
-    :rtype: docx.table.Table
-    """
-    # Create table with column names with an italic formatting
-    current_table.cell(0, 0).text = 'п/п'
-    current_table.cell(0, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-
-    current_table.cell(0, 1).text = 'Полные ФИО автора РИД'
-    current_table.cell(0, 1).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-
-    run_job = current_table.cell(0, 2).paragraphs[0].add_run()
-    run_job.text = 'Сокращенное наименование организации-работодателя, ' \
-                   'наименование структурного подразделения и должности ' \
-                   'автора РИД '
-    # Добавление курсивного текста
-    run_job_help = current_table.cell(0, 2).paragraphs[0].add_run()
-    run_job_help.text = '(на момент создания РИД)'
-    run_job_help.italic = True
-    current_table.cell(0, 2).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-
-    # run_agreement = current_table.cell(0, 3).paragraphs[0].add_run()
-    current_table.cell(0, 3).paragraphs[0].add_run().text = \
-        'Согласование включения в состав авторов (Не требуется / Получено ' \
-        '(реквизиты письма о согласовании, при наличии) / ' \
-        'Требуется согласование в Корпорации)'
-    current_table.cell(0, 3).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-
-    return current_table
+# def create_column_names_ui(current_table):
+#     """Create names for column in table of UI, prepare a table to filling.
+#
+#     :param current_table: The empty table with styles and simple formatting
+#     :type current_table: docx.table.Table
+#     :return: The table with the correct names of the columns
+#     :rtype: docx.table.Table
+#     """
+#     # Create table with column names with an italic formatting
+#     current_table.cell(0, 0).text = 'п/п'
+#     current_table.cell(0, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
+#
+#     current_table.cell(0, 1).text = 'Полные ФИО автора РИД'
+#     current_table.cell(0, 1).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
+#
+#     run_job = current_table.cell(0, 2).paragraphs[0].add_run()
+#     run_job.text = 'Сокращенное наименование организации-работодателя, ' \
+#                    'наименование структурного подразделения и должности ' \
+#                    'автора РИД '
+#     # Добавление курсивного текста
+#     run_job_help = current_table.cell(0, 2).paragraphs[0].add_run()
+#     run_job_help.text = '(на момент создания РИД)'
+#     run_job_help.italic = True
+#     current_table.cell(0, 2).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
+#
+#     # run_agreement = current_table.cell(0, 3).paragraphs[0].add_run()
+#     current_table.cell(0, 3).paragraphs[0].add_run().text = \
+#         'Согласование включения в состав авторов (Не требуется / Получено ' \
+#         '(реквизиты письма о согласовании, при наличии) / ' \
+#         'Требуется согласование в Корпорации)'
+#     current_table.cell(0, 3).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
+#
+#     return current_table
+# def load_template_ui():
+#     docx.Document(f'{os.sep}resources{os.sep}UI_template.docx')
 
 
 def create_df_ui(df_authors):
@@ -158,6 +160,19 @@ def del_end_comma(element):
     return element
 
 
+def find_table_in_ui_template(doc):
+    for table in doc.tables:
+        if table.cell(0, 0).text == '1.5.':
+
+            return table
+
+    error_info = (
+        'NotFoundTable', 'Table 1.5. is not exist in ui template',
+        'fn: load_file_to_df; The 2th "if"')
+
+    raise Exception(error_info)
+
+
 def create_ui_docx(df_ui, path_dir_to_save):
     """Create a document (.docx) for UI and fill this doc a data about authors
 
@@ -169,20 +184,25 @@ def create_ui_docx(df_ui, path_dir_to_save):
     :rtype: None
 
     """
-    # Initial Document object
-    doc = create_docx_fmt()
+    # Open of template for ui
+    doc = docx.Document(f'{os.sep}resources{os.sep}UI_template.docx')
+
+    # Find current table in template document
+    table = find_table_in_ui_template(doc)
+
+    # doc = docx.Document(f'')
 
     # Set a shape of the table
-    table_rows, table_cols = df_ui.shape
-
-    # Initial the table
-    my_table = doc.add_table(rows=(table_rows + 1), cols=table_cols)
-
-    # Set the style to the table
-    my_table.style = 'Table Grid'
-
-    # Add the column names with right formatting
-    my_table = create_column_names_ui(my_table)
+    # table_rows, table_cols = df_ui.shape
+    #
+    # # Initial the table
+    # my_table = doc.add_table(rows=(table_rows + 1), cols=table_cols)
+    #
+    # # Set the style to the table
+    # my_table.style = 'Table Grid'
+    #
+    # # Add the column names with right formatting
+    # my_table = create_column_names_ui(my_table)
 
     # Fill the table
     for row in range(table_rows):
