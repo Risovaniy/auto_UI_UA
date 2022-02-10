@@ -66,40 +66,6 @@ def create_table_fmt(document, count_rows, count_cols):
 #                   UI LOGIC                        #
 #                                                   #
 #####################################################
-# import os
-#
-# import docx
-# from docx.shared import Inches
-#
-#
-# def find_table_in_ui_template(doc):
-#     for table in doc.tables:
-#         if table.cell(0, 0).text == 'п/п':
-#             return table
-#
-#
-# def open_docx_file(path):
-#     return docx.Document(path)
-#
-#     # return doc
-#
-#
-# if __name__ == '__main__':
-#     doc = open_docx_file(r'C:\Users\Risov\Desktop\Prog\auto_ui_ua\auto_UI_UA\resources\UI_template.docx')
-#
-#     ui_table = find_table_in_ui_template(doc)
-#
-#     ui_table.add_row()
-#     ui_table.add_row()
-#     ui_table.add_row()
-#     ui_table.add_row()
-#     ui_table.add_row()
-#
-#     ui_table.style = 'table_ui' #ui_table._TableStyle('table_ui')
-#     ui_table.style = 'table_ui_title' #ui_table._TableStyle('table_ui')
-#
-#     doc.save(f"{os.sep}test_ui_table.docx")
-
 
 # def create_column_names_ui(current_table):
 #     """Create names for column in table of UI, prepare a table to filling.
@@ -166,7 +132,8 @@ def create_df_ui(df_authors):
                                   df_authors['post'] + ",\n" + \
                                   df_authors['academic']
         # Delete marked absences of academic rank
-        finish_df['work_place'] = finish_df['work_place'].apply(del_end_comma)
+        finish_df['work_place'] = finish_df['work_place'].apply(
+            delete_the_final_comma)
 
         # Create the approval column by default
         finish_df['approval'] = 'Не требуется'
@@ -176,7 +143,7 @@ def create_df_ui(df_authors):
         raise KeyError(sys.exc_info())
 
 
-def del_end_comma(element):
+def delete_the_final_comma(element):
     """Remove the last "empty" comma
 
     :param element: Element from the 'work_space' column
@@ -195,56 +162,87 @@ def del_end_comma(element):
     return element
 
 
-def find_table_in_ui_template(doc):
-    for table in doc.tables:
-        if table.cell(0, 0).text == '1.5.':
+# def create_ui_docx(df_ui, path_dir_to_save):
+#     """Create a document (.docx) for UI and fill this doc a data about authors
+#
+#     :param df_ui: Dataframe with special processing info about authors for UI
+#     :type df_ui: pandas.core.frame.DataFrame
+#     :param path_dir_to_save: The path to the directory to save the created files
+#     :type path_dir_to_save: str
+#     :return: Save 'table_for_UI.docx' document
+#     :rtype: None
+#
+#     """
+#     # Open of template for ui
+#     doc = docx.Document(f'.{os.sep}resources{os.sep}UI_template.docx')
+#
+#     # Find current table in template document
+#     # table = find_table_in_ui_template(doc)
+#
+#     # doc = docx.Document(f'')
+#
+#     # Set a shape of the table
+#     # table_rows, table_cols = df_ui.shape
+#     #
+#     # # Initial the table
+#     # my_table = doc.add_table(rows=(table_rows + 1), cols=table_cols)
+#     #
+#     # # Set the style to the table
+#     # my_table.style = 'Table Grid'
+#     #
+#     # # Add the column names with right formatting
+#     # my_table = create_column_names_ui(my_table)
+#
+#     # Fill the table
+#     for row in range(table_rows):
+#         for col in range(table_cols):
+#
+#             # Get a cell from the table
+#             cell = my_table.cell((row + 1), col)
+#
+#             # Write our data into cell
+#             cell.text = df_ui.iloc[row, col]
+#
+#             # Center alignment of text inside a special cell (first and last)
+#             if col in (0, 3):
+#                 cell.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
+#                 cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+#
+#     # Save the newly created file in .docx format
+#     created_date = datetime.now().strftime('(%Y-%m-%d_%H-%M)')
+#     current_name = CONFIG.get(LANGUAGE, '-filename_UI-')
+#     doc.save(f"{path_dir_to_save}{os.sep}{current_name}{created_date}.docx")
 
-            return table
 
-    error_info = (
-        'NotFoundTable', 'Table 1.5. is not exist in ui template',
-        'fn: load_file_to_df; The 2th "if"')
-
-    raise Exception(error_info)
-
-
-def create_ui_docx(df_ui, path_dir_to_save):
+def open_and_fill_table_ui(df_ui):
     """Create a document (.docx) for UI and fill this doc a data about authors
 
     :param df_ui: Dataframe with special processing info about authors for UI
     :type df_ui: pandas.core.frame.DataFrame
-    :param path_dir_to_save: The path to the directory to save the created files
-    :type path_dir_to_save: str
     :return: Save 'table_for_UI.docx' document
-    :rtype: None
+    :rtype: docx.document.Document
 
     """
     # Open of template for ui
-    doc = docx.Document(f'{os.sep}resources{os.sep}UI_template.docx')
+    document = docx.Document(f'.{os.sep}resources{os.sep}UI_template.docx')
 
-    # Find current table in template document
-    table = find_table_in_ui_template(doc)
+    # Take the last table (1.5 Authors)
+    table = document.tables[-1]
 
-    # doc = docx.Document(f'')
+    # Save parameters of the table
+    table_rows = df_ui.shape[0]
+    # table_cols = df_ui.shape[1]
 
-    # Set a shape of the table
-    # table_rows, table_cols = df_ui.shape
-    #
-    # # Initial the table
-    # my_table = doc.add_table(rows=(table_rows + 1), cols=table_cols)
-    #
-    # # Set the style to the table
-    # my_table.style = 'Table Grid'
-    #
-    # # Add the column names with right formatting
-    # my_table = create_column_names_ui(my_table)
+    # Add all the rows in the table
+    [table.add_row()] * (table_rows - 1)
 
     # Fill the table
-    for row in range(table_rows):
-        for col in range(table_cols):
+    for row in range(1, 2):
+        # Skip headers
+        for col in range(4):
 
             # Get a cell from the table
-            cell = my_table.cell((row + 1), col)
+            cell = table.cell(row, col)
 
             # Write our data into cell
             cell.text = df_ui.iloc[row, col]
@@ -254,10 +252,38 @@ def create_ui_docx(df_ui, path_dir_to_save):
                 cell.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
                 cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
 
+    return document
+
+
+def make_finish_I_part(document):
+    table_1_6 = document.add_table(1, 3)
+
+    cell6_0 = table_1_6.cell(0, 0)
+    cell6_0.text = '1.6.'
+    cell6_0.paragraphs[0].bold = True
+    cell6_0.width = 10
+
+    cell6_1 = table_1_6.cell(0, 1)
+    cell6_1.paragraphs[0].add_run('Распределение прав на РИД:\n').bold = True
+    cell6_1.width = 60
+
+    cell6_2 = table_1_6.cell(0, 2)
+    cell6_2.width = 10
+
+    return document
+
+
+def finishing_ui(document):
+    document = make_finish_I_part(document)
+
+    return document
+
+
+def save_to_docx(document, path_dir_to_save):
     # Save the newly created file in .docx format
     created_date = datetime.now().strftime('(%Y-%m-%d_%H-%M)')
-    current_name = CONFIG.get(LANGUAGE, '-filename_UI-')
-    doc.save(f"{path_dir_to_save}{os.sep}{current_name}{created_date}.docx")
+    docx_name = CONFIG.get(LANGUAGE, '-filename_UI-')
+    document.save(f"{path_dir_to_save}{os.sep}{docx_name}{created_date}.docx")
 
 
 def generate_file_ui(df_authors, dir_for_save=''):
@@ -274,9 +300,13 @@ def generate_file_ui(df_authors, dir_for_save=''):
     # Processing the df_input for table in UI.docx document
     df_UI = create_df_ui(df_authors)
 
-    # Create UI.docx file with generated table for copying in the main UI
+    # Open template and fill the table
+    document = open_and_fill_table_ui(df_UI)
 
-    create_ui_docx(df_UI, dir_for_save)
+    # Finishing of document and save it
+    document = finishing_ui(document)
+
+    save_to_docx(document, dir_for_save)
 
 
 #####################################################
@@ -699,7 +729,6 @@ def make_only_UA(path_to_authors_data, dir_for_save_file):
     generate_file_ua(df_in, dir_for_save=dir_for_save_file)
 
 
-
 #####################################################
 #                                                   #
 #          New version (use templates)              #
@@ -711,30 +740,29 @@ def open_docx_file(path):
 
     # return doc
 
-
-if __name__ == '__main__':
-    doc = open_docx_file('/home/risovaniy/auto_UI_UA/resources/UA_template.docx')
-
-    doc.add_paragraph()
-
-    # First number is the paragraph, second number - run in this paragraph
-    run_0_0 = doc.paragraphs[-1].add_run()
-    run_0_0.text = "Я, "
-
-    run_0_1 = doc.paragraphs[-1].add_run()
-    run_0_1.text = f"\t\tМоя информация строка 670\t\t\t\t\t,"
-    run_0_1.font.underline = True
-
-    doc.add_paragraph()
-
-    doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
-    run_1 = doc.paragraphs[-1].add_run()
-    run_1.text = "(ФИО автора)"
-    run_1.font.size = docx.shared.Pt(10)  # 8 it is just for tests
-
-    doc.add_paragraph()
-
-    run_2_0 = doc.paragraphs[-1].add_run()
-    run_2_0.text = "настоящим уведомляю "
-
-    doc.save('/home/risovaniy/auto_UI_UA/trash/my_first_test.docx')
+# if __name__ == '__main__':
+#     doc = open_docx_file('/home/risovaniy/auto_UI_UA/resources/UA_template.docx')
+#
+#     doc.add_paragraph()
+#
+#     # First number is the paragraph, second number - run in this paragraph
+#     run_0_0 = doc.paragraphs[-1].add_run()
+#     run_0_0.text = "Я, "
+#
+#     run_0_1 = doc.paragraphs[-1].add_run()
+#     run_0_1.text = f"\t\tМоя информация строка 670\t\t\t\t\t,"
+#     run_0_1.font.underline = True
+#
+#     doc.add_paragraph()
+#
+#     doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
+#     run_1 = doc.paragraphs[-1].add_run()
+#     run_1.text = "(ФИО автора)"
+#     run_1.font.size = docx.shared.Pt(10)  # 8 it is just for tests
+#
+#     doc.add_paragraph()
+#
+#     run_2_0 = doc.paragraphs[-1].add_run()
+#     run_2_0.text = "настоящим уведомляю "
+#
+#     doc.save('/home/risovaniy/auto_UI_UA/trash/my_first_test.docx')

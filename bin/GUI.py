@@ -10,6 +10,10 @@ from bin.create_UI_UA import make_only_ui, make_only_UA, make_ui_and_ua, \
 # Location of my global icon
 GLOBAL_ICON = str(f"{path.Path.cwd()}{os.sep}resources{os.sep}global_icon.png")
 
+# ToDo Изменить способ доставания из конфигов - можно как со словарем работать
+# ToDo Изменить способ оформления ранов и параграфов: можно сразу после создания
+#   doc.add_run('Test text').underline = True - если доп оформление одно только
+
 
 def popup_are_you_sure(text='Just text',
                        title='Main title',
@@ -790,15 +794,15 @@ def create_files_fault_tolerant(event, values):
     """
     # Catching errors when generating files (the basis is incorrect source data)
     # result = create_files(event, values)
-    try:
-        result = create_files(event, values)
-        return result
+    # try:
+    result = create_files(event, values)
+    return result
 
-    except:
-        print(f'\tevent\n{event}\n'
-              f'\tvalues\n{values}\n'
-              f'\tsys.exc_info()\n{sys.exc_info()}\n\n')
-        return error_processing()
+    # except:
+    #     print(f'\tevent\n{event}\n'
+    #           f'\tvalues\n{values}\n'
+    #           f'\tsys.exc_info()\n{sys.exc_info()}\n\n')
+    #     return error_processing()
 
 
 def create_files(event, values):
