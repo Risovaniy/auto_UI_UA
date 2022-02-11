@@ -15,7 +15,6 @@ from bin.load_data import load_and_preprocessing_data, read_config_and_language
 #                General logic                      #
 #                                                   #
 #####################################################
-
 CONFIG, LANGUAGE = read_config_and_language()
 
 # ToDo Создать шаблоны документов: часть первая (которую можно дополнять),
@@ -76,7 +75,6 @@ def save_to_docx(document, path_dir_to_save, filename_key):
 #                   UI LOGIC                        #
 #                                                   #
 #####################################################
-
 def create_df_ui(df_authors):
     """Creates a dataframe for the table in the Notification of Performers:
     | № | Full name | Place of work and position | Consent |
@@ -244,165 +242,205 @@ def create_df_ua_part1(df_authors):
         raise KeyError(sys.exc_info())
 
 
-def generate_text_for_one(df_row, doc, organization):
+# def generate_text_for_one(df_row, doc, organization):
+#     """Adding to the document (UA.docx ) the text part for the author from this
+#     df_row
+#
+#     :param df_row: A string from a dataframe with information from one author
+#     :type df_row: pandas.core.series.Series
+#     :param doc: The document in which to write the text part by the author
+#     :type doc: docx.document.Document
+#     :param organization: The organization that we are notifying
+#     :type organization: str
+#     :return: The document with added text information about the author
+#     :rtype: docx.document.Document
+#
+#     """
+#     doc.add_paragraph()
+#
+#     # First number is the paragraph, second number - run in this paragraph
+#     run_0_0 = doc.paragraphs[-1].add_run()
+#     run_0_0.text = "Я, "
+#
+#     run_0_1 = doc.paragraphs[-1].add_run()
+#     run_0_1.text = f"\t\t{df_row['full_name']}\t\t\t\t\t,"
+#     run_0_1.font.underline = True
+#
+#     doc.add_paragraph()
+#
+#     doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
+#     run_1 = doc.paragraphs[-1].add_run()
+#     run_1.text = "(ФИО автора)"
+#     run_1.font.size = docx.shared.Pt(10)  # 8 it is just for tests
+#
+#     doc.add_paragraph()
+#
+#     run_2_0 = doc.paragraphs[-1].add_run()
+#     run_2_0.text = "настоящим уведомляю "
+#
+#     run_2_1 = doc.paragraphs[-1].add_run()
+#     run_2_1.text = f"\t\t{organization}\t\t\t\t\t"
+#     run_2_1.font.underline = True
+#
+#     doc.add_paragraph()
+#
+#     doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
+#     run_3 = doc.paragraphs[-1].add_run()
+#     run_3.text = "(название организации)"
+#     run_3.font.size = docx.shared.Pt(10)  # 8 it is just for tests
+#
+#     doc.add_paragraph()
+#
+#     run_4 = doc.paragraphs[-1].add_run()
+#     run_4.text = "о том, что будучи"
+#
+#     # Logic for own or not employers
+#     doc.add_paragraph()
+#
+#     if df_row['date_employ'] is not pd.NaT:
+#         run_5_0 = doc.paragraphs[-1].add_run()
+#         run_5_0.text = "☒ работником указанной организации на основании " \
+#                        "трудового договора от «"
+#
+#         employ_date = df_row['date_employ']
+#
+#         # Write a day
+#         run_5_1 = doc.paragraphs[-1].add_run()
+#         run_5_1.text = str(employ_date.strftime("%d"))
+#         run_5_1.font.underline = True
+#
+#         # Write the space between the day and month
+#         run_5_2 = doc.paragraphs[-1].add_run()
+#         run_5_2.text = "» "
+#
+#         # Write a month
+#         run_5_3 = doc.paragraphs[-1].add_run()
+#         run_5_3.text = str(employ_date.strftime("%m"))
+#         run_5_3.font.underline = True
+#
+#         # Write the space between the month and year
+#         run_5_4 = doc.paragraphs[-1].add_run()
+#         run_5_4.text = " "
+#
+#         # Write the year
+#         run_5_5 = doc.paragraphs[-1].add_run()
+#         run_5_5.text = str(employ_date.year)
+#         run_5_5.font.underline = True
+#
+#         run_5_6 = doc.paragraphs[-1].add_run()
+#         run_5_6.text = "г."
+#     else:
+#         run_5 = doc.paragraphs[-1].add_run()
+#         run_5.text = "☐ работником указанной организации на основании " \
+#                      "трудового договора от «___» ___ 20___г."
+#
+#     doc.add_paragraph()
+#     run_6 = doc.paragraphs[-1].add_run()
+#     run_6.text = "\t\tи действуя"
+#
+#     doc.add_paragraph()
+#     run_7 = doc.paragraphs[-1].add_run()
+#     run_7.text = "\t\t☐ в рамках своих служебных обязанностей в соответствии с ____________ " \
+#                  "_____________________________________________________________________________;"
+#
+#     doc.add_paragraph()
+#     doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
+#     run_8 = doc.paragraphs[-1].add_run()
+#     run_8.text = "(номера пунктов трудового договора и / или должностной инструкции)"
+#     run_8.font.size = docx.shared.Pt(10)
+#
+#     doc.add_paragraph()
+#     run_9 = doc.paragraphs[-1].add_run()
+#     run_9.text = "\t\t☒ на основании служебного задания, предусмотренного _________"
+#
+#     doc.add_paragraph()
+#     doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
+#     run_10_0 = doc.paragraphs[-1].add_run()
+#     run_10_0.text = '__________'
+#
+#     run_10_1 = doc.paragraphs[-1].add_run()
+#     run_10_1.text = df_row['contract']
+#     run_10_1.font.underline = True
+#
+#     run_10_2 = doc.paragraphs[-1].add_run()
+#     run_10_2.text = '__________;'
+#
+#     doc.add_paragraph()
+#     doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
+#     run_11 = doc.paragraphs[-1].add_run()
+#     run_11.text = "(наименование документа, регламентирующего выданное работнику задание)"
+#     run_11.font.size = docx.shared.Pt(10)
+#
+#     doc.add_paragraph()
+#     run_12 = doc.paragraphs[-1].add_run()
+#     run_12.text = "☐ исполнителем по договору №______________ от «____» _______________ 20____ г.,"
+#
+#     # White space
+#     doc.add_paragraph()
+#
+#     doc.add_paragraph()
+#     run_13 = doc.paragraphs[-1].add_run()
+#     run_13.text = "я создал охраноспособный результат интеллектуальной деятельности."
+#
+#     # White space
+#     doc.add_paragraph()
+#
+#     doc.add_paragraph()
+#     run_14_0 = doc.paragraphs[-1].add_run()
+#     run_14_0.text = "Творческий вклад: __________"
+#     run_14_1 = doc.paragraphs[-1].add_run()
+#     run_14_1.text = df_row['contribution']
+#     run_14_1.font.underline = True
+#     run_14_2 = doc.paragraphs[-1].add_run()
+#     run_14_2.text = "_____________________________"
+#
+#     # White spaces x2
+#     [doc.add_paragraph()] * 2
+#
+#     return doc
+
+def add_fill_table_for_one(df_row, based_doc, path_table_for_one, organization):
     """Adding to the document (UA.docx ) the text part for the author from this
     df_row
 
     :param df_row: A string from a dataframe with information from one author
     :type df_row: pandas.core.series.Series
-    :param doc: The document in which to write the text part by the author
-    :type doc: docx.document.Document
+    :param based_doc: The document in which to write the text part by the author
+    :type based_doc: docx.document.Document
+    :param path_table_for_one: The path to the doc with the table of template
+                               for one author
+    :type path_table_for_one: str
     :param organization: The organization that we are notifying
     :type organization: str
     :return: The document with added text information about the author
     :rtype: docx.document.Document
 
     """
-    doc.add_paragraph()
+    # Adding a table to fill in the author's data
+    based_doc = combine_word_documents(based_doc, path_table_for_one)
 
-    # First number is the paragraph, second number - run in this paragraph
-    run_0_0 = doc.paragraphs[-1].add_run()
-    run_0_0.text = "Я, "
+    # We get a table in which to fill in all the information
+    tabel = based_doc.tables[-1]
 
-    run_0_1 = doc.paragraphs[-1].add_run()
-    run_0_1.text = f"\t\t{df_row['full_name']}\t\t\t\t\t,"
-    run_0_1.font.underline = True
+    # Filling in the name
+    tabel.cells(0, 1).text = df_row['full_name']
 
-    doc.add_paragraph()
+    # ToDo Узнать координаты ячеек в которые записываю инфу
+    # ToDo Добавить условное заполнение в зависимости от наличия даты трудоустройства
+    # ToDo Проверить применять ли дополнительно стили, выравнивание и тд
 
-    doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
-    run_1 = doc.paragraphs[-1].add_run()
-    run_1.text = "(ФИО автора)"
-    run_1.font.size = docx.shared.Pt(10)  # 8 it is just for tests
+    # finish_df['full_name']
+    # finish_df['date_employ']
+    # finish_df['contract']
+    # finish_df['contribution']
 
-    doc.add_paragraph()
+    # Single indent after the table
+    based_doc.add_paragraph()
 
-    run_2_0 = doc.paragraphs[-1].add_run()
-    run_2_0.text = "настоящим уведомляю "
-
-    run_2_1 = doc.paragraphs[-1].add_run()
-    run_2_1.text = f"\t\t{organization}\t\t\t\t\t"
-    run_2_1.font.underline = True
-
-    doc.add_paragraph()
-
-    doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
-    run_3 = doc.paragraphs[-1].add_run()
-    run_3.text = "(название организации)"
-    run_3.font.size = docx.shared.Pt(10)  # 8 it is just for tests
-
-    doc.add_paragraph()
-
-    run_4 = doc.paragraphs[-1].add_run()
-    run_4.text = "о том, что будучи"
-
-    # Logic for own or not employers
-    doc.add_paragraph()
-
-    if df_row['date_employ'] is not pd.NaT:
-        run_5_0 = doc.paragraphs[-1].add_run()
-        run_5_0.text = "☒ работником указанной организации на основании " \
-                       "трудового договора от «"
-
-        employ_date = df_row['date_employ']
-
-        # Write a day
-        run_5_1 = doc.paragraphs[-1].add_run()
-        run_5_1.text = str(employ_date.strftime("%d"))
-        run_5_1.font.underline = True
-
-        # Write the space between the day and month
-        run_5_2 = doc.paragraphs[-1].add_run()
-        run_5_2.text = "» "
-
-        # Write a month
-        run_5_3 = doc.paragraphs[-1].add_run()
-        run_5_3.text = str(employ_date.strftime("%m"))
-        run_5_3.font.underline = True
-
-        # Write the space between the month and year
-        run_5_4 = doc.paragraphs[-1].add_run()
-        run_5_4.text = " "
-
-        # Write the year
-        run_5_5 = doc.paragraphs[-1].add_run()
-        run_5_5.text = str(employ_date.year)
-        run_5_5.font.underline = True
-
-        run_5_6 = doc.paragraphs[-1].add_run()
-        run_5_6.text = "г."
-    else:
-        run_5 = doc.paragraphs[-1].add_run()
-        run_5.text = "☐ работником указанной организации на основании " \
-                     "трудового договора от «___» ___ 20___г."
-
-    doc.add_paragraph()
-    run_6 = doc.paragraphs[-1].add_run()
-    run_6.text = "\t\tи действуя"
-
-    doc.add_paragraph()
-    run_7 = doc.paragraphs[-1].add_run()
-    run_7.text = "\t\t☐ в рамках своих служебных обязанностей в соответствии с ____________ " \
-                 "_____________________________________________________________________________;"
-
-    doc.add_paragraph()
-    doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
-    run_8 = doc.paragraphs[-1].add_run()
-    run_8.text = "(номера пунктов трудового договора и / или должностной инструкции)"
-    run_8.font.size = docx.shared.Pt(10)
-
-    doc.add_paragraph()
-    run_9 = doc.paragraphs[-1].add_run()
-    run_9.text = "\t\t☒ на основании служебного задания, предусмотренного _________"
-
-    doc.add_paragraph()
-    doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
-    run_10_0 = doc.paragraphs[-1].add_run()
-    run_10_0.text = '__________'
-
-    run_10_1 = doc.paragraphs[-1].add_run()
-    run_10_1.text = df_row['contract']
-    run_10_1.font.underline = True
-
-    run_10_2 = doc.paragraphs[-1].add_run()
-    run_10_2.text = '__________;'
-
-    doc.add_paragraph()
-    doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
-    run_11 = doc.paragraphs[-1].add_run()
-    run_11.text = "(наименование документа, регламентирующего выданное работнику задание)"
-    run_11.font.size = docx.shared.Pt(10)
-
-    doc.add_paragraph()
-    run_12 = doc.paragraphs[-1].add_run()
-    run_12.text = "☐ исполнителем по договору №______________ от «____» _______________ 20____ г.,"
-
-    # White space
-    doc.add_paragraph()
-
-    doc.add_paragraph()
-    run_13 = doc.paragraphs[-1].add_run()
-    run_13.text = "я создал охраноспособный результат интеллектуальной деятельности."
-
-    # White space
-    doc.add_paragraph()
-
-    doc.add_paragraph()
-    run_14_0 = doc.paragraphs[-1].add_run()
-    run_14_0.text = "Творческий вклад: __________"
-    run_14_1 = doc.paragraphs[-1].add_run()
-    run_14_1.text = df_row['contribution']
-    run_14_1.font.underline = True
-    run_14_2 = doc.paragraphs[-1].add_run()
-    run_14_2.text = "_____________________________"
-
-    # White spaces x2
-    [doc.add_paragraph()] * 2
-
-    return doc
+    return based_doc
 
 
-def create_doc_with_ua_1part(df_authors):
+def fill_part_1_in_ua(df_authors):
     """Creating the text part of the UA in a doc file, by all authors
 
     :param df_authors: Prepared dataframe with authors data for the text block
@@ -413,14 +451,21 @@ def create_doc_with_ua_1part(df_authors):
     """
     df = create_df_ua_part1(df_authors)
 
-    finish_doc = create_docx_fmt()
+    ua_part_1 = docx.Document(f'{path.Path.cwd()}{os.sep}resources'
+                              f'{os.sep}ua_part_1.docx')
 
-    org = "АО «ГНЦ РФ ТРИНИТИ»"
+    ua_table_for_one = docx.Document(f'{path.Path.cwd()}{os.sep}resources'
+                                     f'{os.sep}ua_table_for_one.docx')
+
+    organization = "АО «ГНЦ РФ ТРИНИТИ»"
 
     for index in df.index:
-        finish_doc = generate_text_for_one(df.iloc[index], finish_doc, org)
+        ua_part_1 = add_fill_table_for_one(df_row=df.iloc[index],
+                                           based_doc=ua_part_1,
+                                           path_table_for_one=ua_table_for_one,
+                                           organization=organization)
 
-    return finish_doc
+    return ua_part_1
 
 
 #####################################################
@@ -468,74 +513,81 @@ def create_ua_docx(doc, df_ua, path_dir_to_save):
     :rtype: None
 
     """
-    # Space between the text about the authors and the table with signatures
-    [doc.add_paragraph()] * 5
-
-    # Calculate a shape of the table
-    count_authors = df_ua.shape[0]
-    table_rows = count_authors * 3
-    table_cols = 3
-
-    # Initial the table
-    table = create_table_fmt(doc, table_rows, table_cols)
-
-    # Processing for formatting
-    font_size_hint = docx.shared.Pt(9)
-
-    # Fill the table with the data
-    for row in range(table_rows):
-        # Short cell names of one row of the table
-        cell_0 = table.cell(row, 0)
-        cell_1 = table.cell(row, 1)
-        cell_2 = table.cell(row, 2)
-
-        if (row + 1) % 3 == 1:
-            # For signature the
-
-            # Center alignment of text inside a cell
-            cell_0.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-            run_0 = cell_0.paragraphs[0].add_run()
-            # Filling a cell with text
-            run_0.text = '________________/'
-
-            # Center alignment of text inside a cell
-            cell_1.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-            run_1 = cell_1.paragraphs[0].add_run()
-            # Filling a cell with text
-            run_1.text = df_ua['name'].iloc[int(row / 3)]
-            # Make underline at the name of an author
-            run_1.font.underline = True
-
-            # Center alignment of text inside a cell
-            cell_2.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-            run_2 = cell_2.paragraphs[0].add_run()
-            # Filling a cell with text
-            run_2.text = create_sign_date(
-                date=df_ua['date_UA'].iloc[int(row / 3)])
-
-        elif (row + 1) % 3 == 2:
-
-            # Center alignment of text inside cells
-            cell_0.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-            cell_1.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-
-            run_0 = cell_0.paragraphs[0].add_run()
-            run_1 = cell_1.paragraphs[0].add_run()
-
-            # Filling cells with text
-            run_0.text = '(подпись)'
-            run_0.font.size = docx.shared.Pt(10)
-            run_1.text = '(Фамилия И. О.)'
-            run_1.font.size = docx.shared.Pt(10)
-
-            # Setting the font size of the cell text
-            run_0.font.size = font_size_hint
-            run_1.font.size = font_size_hint
-
-    # Save the newly created file in .docx format
-    created_date = datetime.now().strftime('(%d-%m-%Y_%H-%M)')
-    current_name = CONFIG.get(LANGUAGE, '-filename_UA-')
-    doc.save(f"{path_dir_to_save}{os.sep}{current_name}{created_date}.docx")
+    # ToDo Реализовать:
+    #  1. Открываю шаблон для второй части (ua_part_2.docx)
+    #  2. Расширяю таблицу (учесть если автор один всего (в других доках тоже))
+    #  3. Заполняю таблицу данными из датафрейма
+    #  4. Склеиваю базовый файл с новым сгенерированным (новый в конец)
+    #  5. Уже потом в конец добавляю заглушку (копированием из ua_finish.docx)
+    #
+    # # Space between the text about the authors and the table with signatures
+    # [doc.add_paragraph()] * 5
+    #
+    # # Calculate a shape of the table
+    # count_authors = df_ua.shape[0]
+    # table_rows = count_authors * 3
+    # table_cols = 3
+    #
+    # # Initial the table
+    # table = create_table_fmt(doc, table_rows, table_cols)
+    #
+    # # Processing for formatting
+    # font_size_hint = docx.shared.Pt(9)
+    #
+    # # Fill the table with the data
+    # for row in range(table_rows):
+    #     # Short cell names of one row of the table
+    #     cell_0 = table.cell(row, 0)
+    #     cell_1 = table.cell(row, 1)
+    #     cell_2 = table.cell(row, 2)
+    #
+    #     if (row + 1) % 3 == 1:
+    #         # For signature the
+    #
+    #         # Center alignment of text inside a cell
+    #         cell_0.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
+    #         run_0 = cell_0.paragraphs[0].add_run()
+    #         # Filling a cell with text
+    #         run_0.text = '________________/'
+    #
+    #         # Center alignment of text inside a cell
+    #         cell_1.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
+    #         run_1 = cell_1.paragraphs[0].add_run()
+    #         # Filling a cell with text
+    #         run_1.text = df_ua['name'].iloc[int(row / 3)]
+    #         # Make underline at the name of an author
+    #         run_1.font.underline = True
+    #
+    #         # Center alignment of text inside a cell
+    #         cell_2.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
+    #         run_2 = cell_2.paragraphs[0].add_run()
+    #         # Filling a cell with text
+    #         run_2.text = create_sign_date(
+    #             date=df_ua['date_UA'].iloc[int(row / 3)])
+    #
+    #     elif (row + 1) % 3 == 2:
+    #
+    #         # Center alignment of text inside cells
+    #         cell_0.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
+    #         cell_1.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
+    #
+    #         run_0 = cell_0.paragraphs[0].add_run()
+    #         run_1 = cell_1.paragraphs[0].add_run()
+    #
+    #         # Filling cells with text
+    #         run_0.text = '(подпись)'
+    #         run_0.font.size = docx.shared.Pt(10)
+    #         run_1.text = '(Фамилия И. О.)'
+    #         run_1.font.size = docx.shared.Pt(10)
+    #
+    #         # Setting the font size of the cell text
+    #         run_0.font.size = font_size_hint
+    #         run_1.font.size = font_size_hint
+    #
+    # # Save the newly created file in .docx format
+    # created_date = datetime.now().strftime('(%d-%m-%Y_%H-%M)')
+    # current_name = CONFIG.get(LANGUAGE, '-filename_UA-')
+    # doc.save(f"{path_dir_to_save}{os.sep}{current_name}{created_date}.docx")
 
 
 def create_sign_date(date):
@@ -570,7 +622,7 @@ def generate_file_ua(df_authors, dir_for_save=''):
 
     """
     # Create doc with text part of UA
-    doc_with_text_UA = create_doc_with_ua_1part(df_authors)
+    doc_with_text_UA = fill_part_1_in_ua(df_authors)
 
     # Adding the table create_df_ua_part2(df_in)
 
@@ -578,6 +630,11 @@ def generate_file_ua(df_authors, dir_for_save=''):
                    dir_for_save)
 
 
+#####################################################
+#                                                   #
+#                  MAKE LOGIC                       #
+#                                                   #
+#####################################################
 def make_ui_and_ua(path_to_authors_data, dir_for_save_file):
     """Launch creating UI and UA
 
@@ -625,42 +682,3 @@ def make_only_UA(path_to_authors_data, dir_for_save_file):
     df_in = load_and_preprocessing_data(path_to_authors_data)
 
     generate_file_ua(df_in, dir_for_save=dir_for_save_file)
-
-
-#####################################################
-#                                                   #
-#          New version (use templates)              #
-#                                                   #
-#####################################################
-
-def open_docx_file(path):
-    return docx.Document(path)
-
-    # return doc
-
-# if __name__ == '__main__':
-#     doc = open_docx_file('/home/risovaniy/auto_UI_UA/resources/UA_template.docx')
-#
-#     doc.add_paragraph()
-#
-#     # First number is the paragraph, second number - run in this paragraph
-#     run_0_0 = doc.paragraphs[-1].add_run()
-#     run_0_0.text = "Я, "
-#
-#     run_0_1 = doc.paragraphs[-1].add_run()
-#     run_0_1.text = f"\t\tМоя информация строка 670\t\t\t\t\t,"
-#     run_0_1.font.underline = True
-#
-#     doc.add_paragraph()
-#
-#     doc.paragraphs[-1].alignment = WD_TABLE_ALIGNMENT.CENTER
-#     run_1 = doc.paragraphs[-1].add_run()
-#     run_1.text = "(ФИО автора)"
-#     run_1.font.size = docx.shared.Pt(10)  # 8 it is just for tests
-#
-#     doc.add_paragraph()
-#
-#     run_2_0 = doc.paragraphs[-1].add_run()
-#     run_2_0.text = "настоящим уведомляю "
-#
-#     doc.save('/home/risovaniy/auto_UI_UA/trash/my_first_test.docx')
