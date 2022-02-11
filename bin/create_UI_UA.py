@@ -2,8 +2,8 @@
 
 import sys
 from datetime import datetime
-# import locale
 import os
+import pathlib as path
 import pandas as pd
 import docx
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
@@ -18,58 +18,57 @@ from bin.load_data import load_and_preprocessing_data, read_config_and_language
 
 CONFIG, LANGUAGE = read_config_and_language()
 
-
 # ToDo Создать шаблоны документов: часть первая (которую можно дополнять),
 #  часть вторая (у УИ - финишная закрывашка, у УА я еще поработаю с ней),
 #  часть третья - только для УА - финишная закрывашка
+
 # ToDo Почистить код, удалить неиспользуемые функции и документы, написать
 #  документации и комментарии
-# ToDo Прописать в инструкциях что делать с кучей новых файлов
-# ToDo Прописать как можно редактировать шаблоны
+
 # ToDo Сделать упаковку и установочный скрипт для Астра линукс и проверить на
 #  работоспособность
 
+# ToDo Прописать системные требования к проге (винда 7 не подходит)
 
-# def create_docx_fmt():
-#     """Create a document with a font name 'Times New Roman', font size is 12 Pt
-#
-#     :return: New formatted blank document
-#     :rtype: docx.document.Document
-#
-#     """
-#     # Initial Document object
-#     new_doc = docx.Document()
-#
-#     # Specify the main name and font size for the document
-#     new_doc.styles['Normal'].font.name = 'Times New Roman'
-#     new_doc.styles['Normal'].font.size = docx.shared.Pt(12)
-#
-#     return new_doc
-#
-#
-# def create_table_fmt(document, count_rows, count_cols):
-#     """Create a table in document size = (count_rows X count_cols)
-#
-#     :param document: The document to which the table is added
-#     :type document: docx.document.Document
-#     :param count_rows: Count of rows of the table
-#     :type count_rows: int
-#     :param count_cols: Count of columns of the rows
-#     :type count_cols: int
-#     :return: The table with minimal formatting
-#     :rtype: docx.table.Table
-#
-#     """
-#     # Initial the table
-#     table = document.add_table(rows=count_rows, cols=count_cols)
-#
-#     # Alignment of the table to the center of the file
-#     table.alignment = WD_TABLE_ALIGNMENT.CENTER
-#
-#     # Set the style to the table
-#     table.style = 'Table Grid'
-#
-#     return table
+
+def combine_word_documents(based_doc, path_merged_doc):
+    """Copies the entire document from path_marged_doc to the end of based_doc
+    Formatting of the copied elements is preserved if possible
+
+    :param based_doc: The main doc at the end of which the new info is copied
+    :type based_doc: docx.document.Document
+    :param path_merged_doc: The path to the template to copy (my constants)
+    :type path_merged_doc: str
+    :return: Glued Word document
+    :rtype: docx.document.Document
+
+    """
+    merged_doc = docx.Document(path_merged_doc)
+
+    for element in merged_doc.element.body:
+        based_doc.element.body.append(element)
+
+    return based_doc
+
+
+def save_to_docx(document, path_dir_to_save, filename_key):
+    """Saves the Word document (AA or UI) to the desired directory with an
+    indication of the creation date
+
+    :param document: The document to be saved
+    :type document: docx.document.Document
+    :param path_dir_to_save: The path to the directory to save the word doc to
+    :type path_dir_to_save: str
+    :param filename_key: A key file name from configs
+    :type filename_key: str
+    :return: Just saves
+    :rtype: None
+
+    """
+    # Save the newly created file in .docx format
+    created_date = datetime.now().strftime('(%Y-%m-%d_%H-%M)')
+    docx_name = CONFIG.get(LANGUAGE, filename_key)
+    document.save(f"{path_dir_to_save}{os.sep}{docx_name}{created_date}.docx")
 
 
 #####################################################
@@ -77,46 +76,6 @@ CONFIG, LANGUAGE = read_config_and_language()
 #                   UI LOGIC                        #
 #                                                   #
 #####################################################
-
-# ToDo Прописать системные требования к проге (винда 7 не подходит)
-
-
-# def create_column_names_ui(current_table):
-#     """Create names for column in table of UI, prepare a table to filling.
-#
-#     :param current_table: The empty table with styles and simple formatting
-#     :type current_table: docx.table.Table
-#     :return: The table with the correct names of the columns
-#     :rtype: docx.table.Table
-#     """
-#     # Create table with column names with an italic formatting
-#     current_table.cell(0, 0).text = 'п/п'
-#     current_table.cell(0, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-#
-#     current_table.cell(0, 1).text = 'Полные ФИО автора РИД'
-#     current_table.cell(0, 1).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-#
-#     run_job = current_table.cell(0, 2).paragraphs[0].add_run()
-#     run_job.text = 'Сокращенное наименование организации-работодателя, ' \
-#                    'наименование структурного подразделения и должности ' \
-#                    'автора РИД '
-#     # Добавление курсивного текста
-#     run_job_help = current_table.cell(0, 2).paragraphs[0].add_run()
-#     run_job_help.text = '(на момент создания РИД)'
-#     run_job_help.italic = True
-#     current_table.cell(0, 2).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-#
-#     # run_agreement = current_table.cell(0, 3).paragraphs[0].add_run()
-#     current_table.cell(0, 3).paragraphs[0].add_run().text = \
-#         'Согласование включения в состав авторов (Не требуется / Получено ' \
-#         '(реквизиты письма о согласовании, при наличии) / ' \
-#         'Требуется согласование в Корпорации)'
-#     current_table.cell(0, 3).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-#
-#     return current_table
-# def load_template_ui():
-#     docx.Document(f'{os.sep}resources{os.sep}UI_template.docx')
-
 
 def create_df_ui(df_authors):
     """Creates a dataframe for the table in the Notification of Performers:
@@ -147,14 +106,14 @@ def create_df_ui(df_authors):
                                   df_authors['academic']
         # Delete marked absences of academic rank
         finish_df['work_place'] = finish_df['work_place'].apply(
-            delete_the_final_comma)
+            delete_final_comma)
 
         return finish_df
     except KeyError:
         raise KeyError(sys.exc_info())
 
 
-def delete_the_final_comma(element):
+def delete_final_comma(element):
     """Remove the last "empty" comma
 
     :param element: Element from the 'work_space' column
@@ -173,69 +132,17 @@ def delete_the_final_comma(element):
     return element
 
 
-# def create_ui_docx(df_ui, path_dir_to_save):
-#     """Create a document (.docx) for UI and fill this doc a data about authors
-#
-#     :param df_ui: Dataframe with special processing info about authors for UI
-#     :type df_ui: pandas.core.frame.DataFrame
-#     :param path_dir_to_save: The path to the directory to save the created files
-#     :type path_dir_to_save: str
-#     :return: Save 'table_for_UI.docx' document
-#     :rtype: None
-#
-#     """
-#     # Open of template for ui
-#     doc = docx.Document(f'.{os.sep}resources{os.sep}UI_template.docx')
-#
-#     # Find current table in template document
-#     # table = find_table_in_ui_template(doc)
-#
-#     # doc = docx.Document(f'')
-#
-#     # Set a shape of the table
-#     # table_rows, table_cols = df_ui.shape
-#     #
-#     # # Initial the table
-#     # my_table = doc.add_table(rows=(table_rows + 1), cols=table_cols)
-#     #
-#     # # Set the style to the table
-#     # my_table.style = 'Table Grid'
-#     #
-#     # # Add the column names with right formatting
-#     # my_table = create_column_names_ui(my_table)
-#
-#     # Fill the table
-#     for row in range(table_rows):
-#         for col in range(table_cols):
-#
-#             # Get a cell from the table
-#             cell = my_table.cell((row + 1), col)
-#
-#             # Write our data into cell
-#             cell.text = df_ui.iloc[row, col]
-#
-#             # Center alignment of text inside a special cell (first and last)
-#             if col in (0, 3):
-#                 cell.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-#                 cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
-#
-#     # Save the newly created file in .docx format
-#     created_date = datetime.now().strftime('(%Y-%m-%d_%H-%M)')
-#     current_name = CONFIG.get(LANGUAGE, '-filename_UI-')
-#     doc.save(f"{path_dir_to_save}{os.sep}{current_name}{created_date}.docx")
-
-
-def open_and_fill_table_ui(df_ui):
-    """Create a document (.docx) for UI and fill this doc a data about authors
+def fill_table_in_ui(df_ui):
+    """Open the 1-th part of UI document (.docx) and fill the table in this doc
 
     :param df_ui: Dataframe with special processing info about authors for UI
     :type df_ui: pandas.core.frame.DataFrame
-    :return: Save 'table_for_UI.docx' document
+    :return: The 1-th part of UI for saving
     :rtype: docx.document.Document
 
     """
     # Open of template for ui
-    document = docx.Document(f'.{os.sep}resources{os.sep}UI_template.docx')
+    document = docx.Document(f'{path.Path.cwd()}{os.sep}resources{os.sep}ui_part_1.docx')
 
     # Take the last table (1.5 Authors)
     table = document.tables[-1]
@@ -245,7 +152,8 @@ def open_and_fill_table_ui(df_ui):
     # table_cols = df_ui.shape[1]
 
     # Add all the rows in the table
-    [table.add_row()] * (table_rows - 1)
+    for _ in range(table_rows):
+        table.add_row()
 
     # Create the approval column by default
     approval = 'Не требуется'
@@ -272,23 +180,6 @@ def open_and_fill_table_ui(df_ui):
     return document
 
 
-def copy_part_2_ui(dir_to_save):
-    doc = docx.Document(f'.{os.sep}resources{os.sep}UI_template_.docx')
-
-
-def finishing_ui(document):
-    document = make_finish_I_part(document)
-
-    return document
-
-
-def save_to_docx(document, path_dir_to_save, filename_key):
-    # Save the newly created file in .docx format
-    created_date = datetime.now().strftime('(%Y-%m-%d_%H-%M)')
-    docx_name = CONFIG.get(LANGUAGE, filename_key)
-    document.save(f"{path_dir_to_save}{os.sep}{docx_name}{created_date}.docx")
-
-
 def generate_file_ui(df_authors, dir_for_save=''):
     """The finished function for the full cycle of UI generation
 
@@ -304,12 +195,16 @@ def generate_file_ui(df_authors, dir_for_save=''):
     df_UI = create_df_ui(df_authors)
 
     # Open template and fill the table
-    document = open_and_fill_table_ui(df_UI)
+    document = fill_table_in_ui(df_UI)
 
-    # Finishing of document and save it
-    document = finishing_ui(document)
+    # Finishing of document
+    path_merged_doc = f'{path.Path.cwd()}{os.sep}ui_finish.docx'
+    document = combine_word_documents(document, path_merged_doc)
 
-    save_to_docx(document, dir_for_save)
+    # Save the document
+    save_to_docx(document=document,
+                 path_dir_to_save=dir_for_save,
+                 filename_key='-filename_UI-')
 
 
 #####################################################
