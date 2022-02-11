@@ -19,46 +19,57 @@ from bin.load_data import load_and_preprocessing_data, read_config_and_language
 CONFIG, LANGUAGE = read_config_and_language()
 
 
-def create_docx_fmt():
-    """Create a document with a font name 'Times New Roman', font size is 12 Pt
-
-    :return: New formatted blank document
-    :rtype: docx.document.Document
-
-    """
-    # Initial Document object
-    new_doc = docx.Document()
-
-    # Specify the main name and font size for the document
-    new_doc.styles['Normal'].font.name = 'Times New Roman'
-    new_doc.styles['Normal'].font.size = docx.shared.Pt(12)
-
-    return new_doc
+# ToDo Создать шаблоны документов: часть первая (которую можно дополнять),
+#  часть вторая (у УИ - финишная закрывашка, у УА я еще поработаю с ней),
+#  часть третья - только для УА - финишная закрывашка
+# ToDo Почистить код, удалить неиспользуемые функции и документы, написать
+#  документации и комментарии
+# ToDo Прописать в инструкциях что делать с кучей новых файлов
+# ToDo Прописать как можно редактировать шаблоны
+# ToDo Сделать упаковку и установочный скрипт для Астра линукс и проверить на
+#  работоспособность
 
 
-def create_table_fmt(document, count_rows, count_cols):
-    """Create a table in document size = (count_rows X count_cols)
-
-    :param document: The document to which the table is added
-    :type document: docx.document.Document
-    :param count_rows: Count of rows of the table
-    :type count_rows: int
-    :param count_cols: Count of columns of the rows
-    :type count_cols: int
-    :return: The table with minimal formatting
-    :rtype: docx.table.Table
-
-    """
-    # Initial the table
-    table = document.add_table(rows=count_rows, cols=count_cols)
-
-    # Alignment of the table to the center of the file
-    table.alignment = WD_TABLE_ALIGNMENT.CENTER
-
-    # Set the style to the table
-    table.style = 'Table Grid'
-
-    return table
+# def create_docx_fmt():
+#     """Create a document with a font name 'Times New Roman', font size is 12 Pt
+#
+#     :return: New formatted blank document
+#     :rtype: docx.document.Document
+#
+#     """
+#     # Initial Document object
+#     new_doc = docx.Document()
+#
+#     # Specify the main name and font size for the document
+#     new_doc.styles['Normal'].font.name = 'Times New Roman'
+#     new_doc.styles['Normal'].font.size = docx.shared.Pt(12)
+#
+#     return new_doc
+#
+#
+# def create_table_fmt(document, count_rows, count_cols):
+#     """Create a table in document size = (count_rows X count_cols)
+#
+#     :param document: The document to which the table is added
+#     :type document: docx.document.Document
+#     :param count_rows: Count of rows of the table
+#     :type count_rows: int
+#     :param count_cols: Count of columns of the rows
+#     :type count_cols: int
+#     :return: The table with minimal formatting
+#     :rtype: docx.table.Table
+#
+#     """
+#     # Initial the table
+#     table = document.add_table(rows=count_rows, cols=count_cols)
+#
+#     # Alignment of the table to the center of the file
+#     table.alignment = WD_TABLE_ALIGNMENT.CENTER
+#
+#     # Set the style to the table
+#     table.style = 'Table Grid'
+#
+#     return table
 
 
 #####################################################
@@ -67,15 +78,9 @@ def create_table_fmt(document, count_rows, count_cols):
 #                                                   #
 #####################################################
 
-# ToDo Создавать по 2 документа - сгенерированные данные (стили применены) и
-#  шаблон в который все надо скопироват и который надо дополнить общей инфой
-# ToDo Создать подходящие шалоны - чтобы в них было удобно копировать: думаю
-#  лучше как-то обозначить места куда необходимо вставлять сделанные таблицы
-# ToDo Сделать пакет для Астра линукс и проверить его работоспособность
 # ToDo Прописать системные требования к проге (винда 7 не подходит)
-# ToDo
-#
-#
+
+
 # def create_column_names_ui(current_table):
 #     """Create names for column in table of UI, prepare a table to filling.
 #
@@ -143,9 +148,6 @@ def create_df_ui(df_authors):
         # Delete marked absences of academic rank
         finish_df['work_place'] = finish_df['work_place'].apply(
             delete_the_final_comma)
-
-        # Create the approval column by default
-        finish_df['approval'] = 'Не требуется'
 
         return finish_df
     except KeyError:
@@ -245,16 +247,22 @@ def open_and_fill_table_ui(df_ui):
     # Add all the rows in the table
     [table.add_row()] * (table_rows - 1)
 
+    # Create the approval column by default
+    approval = 'Не требуется'
+
     # Fill the table
     for row in range(1, 2):
         # Skip headers
         for col in range(4):
-
             # Get a cell from the table
             cell = table.cell(row, col)
 
             # Write our data into cell
-            cell.text = df_ui.iloc[row, col]
+            if col == 3:
+                cell.text = approval
+
+            else:
+                cell.text = df_ui.iloc[row, col]
 
             # Center alignment of text inside a special cell (first and last)
             if col in (0, 3):
@@ -264,22 +272,8 @@ def open_and_fill_table_ui(df_ui):
     return document
 
 
-def make_finish_I_part(document):
-    table_1_6 = document.add_table(1, 3)
-
-    cell6_0 = table_1_6.cell(0, 0)
-    cell6_0.text = '1.6.'
-    cell6_0.paragraphs[0].bold = True
-    cell6_0.width = 10
-
-    cell6_1 = table_1_6.cell(0, 1)
-    cell6_1.paragraphs[0].add_run('Распределение прав на РИД:\n').bold = True
-    cell6_1.width = 60
-
-    cell6_2 = table_1_6.cell(0, 2)
-    cell6_2.width = 10
-
-    return document
+def copy_part_2_ui(dir_to_save):
+    doc = docx.Document(f'.{os.sep}resources{os.sep}UI_template_.docx')
 
 
 def finishing_ui(document):
@@ -288,10 +282,10 @@ def finishing_ui(document):
     return document
 
 
-def save_to_docx(document, path_dir_to_save):
+def save_to_docx(document, path_dir_to_save, filename_key):
     # Save the newly created file in .docx format
     created_date = datetime.now().strftime('(%Y-%m-%d_%H-%M)')
-    docx_name = CONFIG.get(LANGUAGE, '-filename_UI-')
+    docx_name = CONFIG.get(LANGUAGE, filename_key)
     document.save(f"{path_dir_to_save}{os.sep}{docx_name}{created_date}.docx")
 
 
