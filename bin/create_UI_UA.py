@@ -7,7 +7,6 @@ import pathlib as path
 import pandas as pd
 import docx
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
-from docx.shared import Inches
 from bin.load_data import load_and_preprocessing_data, read_config_and_language
 
 #####################################################
@@ -373,15 +372,11 @@ def create_df_ua_part2(df_authors):
         raise KeyError(sys.exc_info())
 
 
-def create_ua_docx(doc, df_ua, path_dir_to_save):
+def fill_part_2_of_ua(df_ua):
     """Add the table in UA and save the result UA document (both text and table)
 
-    :param doc: Doc with added text by authors
-    :type doc: docx.document.Document
     :param df_ua: Prepared dataframe with authors data for the table
     :type df_ua: pandas.core.frame.DataFrame
-    :param path_dir_to_save: The path to the directory to save the created doc
-    :type path_dir_to_save: str
     :return: Saves the created UA document (both text and table)
     :rtype: None
 
@@ -392,75 +387,57 @@ def create_ua_docx(doc, df_ua, path_dir_to_save):
     #  3. Заполняю таблицу данными из датафрейма
     #  4. Склеиваю базовый файл с новым сгенерированным (новый в конец)
     #  5. Уже потом в конец добавляю заглушку (копированием из ua_finish.docx)
-    #
-    # # Space between the text about the authors and the table with signatures
-    # [doc.add_paragraph()] * 5
-    #
-    # # Calculate a shape of the table
-    # count_authors = df_ua.shape[0]
-    # table_rows = count_authors * 3
-    # table_cols = 3
-    #
-    # # Initial the table
-    # table = create_table_fmt(doc, table_rows, table_cols)
-    #
-    # # Processing for formatting
-    # font_size_hint = docx.shared.Pt(9)
-    #
-    # # Fill the table with the data
-    # for row in range(table_rows):
-    #     # Short cell names of one row of the table
-    #     cell_0 = table.cell(row, 0)
-    #     cell_1 = table.cell(row, 1)
-    #     cell_2 = table.cell(row, 2)
-    #
-    #     if (row + 1) % 3 == 1:
-    #         # For signature the
-    #
-    #         # Center alignment of text inside a cell
-    #         cell_0.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-    #         run_0 = cell_0.paragraphs[0].add_run()
-    #         # Filling a cell with text
-    #         run_0.text = '________________/'
-    #
-    #         # Center alignment of text inside a cell
-    #         cell_1.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-    #         run_1 = cell_1.paragraphs[0].add_run()
-    #         # Filling a cell with text
-    #         run_1.text = df_ua['name'].iloc[int(row / 3)]
-    #         # Make underline at the name of an author
-    #         run_1.font.underline = True
-    #
-    #         # Center alignment of text inside a cell
-    #         cell_2.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-    #         run_2 = cell_2.paragraphs[0].add_run()
-    #         # Filling a cell with text
-    #         run_2.text = create_sign_date(
-    #             date=df_ua['date_UA'].iloc[int(row / 3)])
-    #
-    #     elif (row + 1) % 3 == 2:
-    #
-    #         # Center alignment of text inside cells
-    #         cell_0.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-    #         cell_1.paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-    #
-    #         run_0 = cell_0.paragraphs[0].add_run()
-    #         run_1 = cell_1.paragraphs[0].add_run()
-    #
-    #         # Filling cells with text
-    #         run_0.text = '(подпись)'
-    #         run_0.font.size = docx.shared.Pt(10)
-    #         run_1.text = '(Фамилия И. О.)'
-    #         run_1.font.size = docx.shared.Pt(10)
-    #
-    #         # Setting the font size of the cell text
-    #         run_0.font.size = font_size_hint
-    #         run_1.font.size = font_size_hint
-    #
-    # # Save the newly created file in .docx format
-    # created_date = datetime.now().strftime('(%d-%m-%Y_%H-%M)')
-    # current_name = CONFIG.get(LANGUAGE, '-filename_UA-')
-    # doc.save(f"{path_dir_to_save}{os.sep}{current_name}{created_date}.docx")
+
+    # ToDo Нечетные строки - авторы и их подписи,
+    #      Четные - подсказки под ячейками
+    #      Названий столбцов нет у этой таблицы
+
+    # Open the second part of ua
+    doc = docx.Document(f'{path.Path.cwd()}{os.sep}resources{os.sep}'
+                        f'sources{os.sep}ua_part_2.docx')
+
+    # Calculate a shape of the table
+    count_authors = df_ua.shape[0]
+    table_rows = count_authors * 2
+    table_cols = 3
+
+    # Create table
+    table = doc.add_table(table_rows, table_cols)
+
+    # Fill the table with the data
+    for row in range(table_rows):
+        # Short cell names of one row of the table
+        cell_0 = table.cell(row, 0)
+        cell_1 = table.cell(row, 1)
+        cell_2 = table.cell(row, 2)
+
+        if row % 2 == 0:
+            # ToDo Проверить ширину подчеркивания - норм или нет, может вообще
+            #  просто нижнюю границу ячейки отобразить
+            # Cell for signature
+            cell_0.paragraphs[0].add_run().text = '________________/'
+
+            # Cell with author name
+            run_1 = cell_1.paragraphs[0].add_run()
+            run_1.text = df_ua['name'].iloc[int(row/2)]
+            run_1.font.underline = True
+
+            # Cell with date of signature
+            run_2 = cell_2.paragraphs[0].add_run()
+            run_2.text = create_sign_date(date=df_ua['date_UA'].iloc[int(row/2)])
+
+        else:
+            # ToDo Проверить хвататет ли стилей, делают ли они нужный размер шрифта и выравнивание?
+            # Explanations under the data
+            cell_0.paragraphs[0].add_run().text = '(подпись)'
+            cell_1.paragraphs[0].add_run().text = '(Фамилия И. О.)'
+
+    # Applying styles to a table (For even and odd rows, then for the header)
+    # ToDo Реализовать применение стилей к таблице - смогу ли я применить стили построчно?
+    #  Может засунуть в верхний if и применять к каждой строке нужный стиль (чередование)
+
+    return doc
+
 
 
 def create_sign_date(date):
@@ -496,12 +473,17 @@ def generate_file_ua(df_authors, dir_for_save=''):
 
     """
     # Create doc with text part of UA
-    doc_with_text_UA = fill_part_1_of_ua(df_authors)
+    part_1_of_ua = fill_part_1_of_ua(df_authors)
 
     # Adding the table create_df_ua_part2(df_in)
+    part_2_of_ua = fill_part_2_of_ua(create_df_ua_part2(df_authors))
 
-    create_ua_docx(doc_with_text_UA, create_df_ua_part2(df_authors),
-                   dir_for_save)
+    finish_doc = combine_word_documents(part_1_of_ua, part_2_of_ua)
+    finish_doc = combine_word_documents(finish_doc,
+                                        f'{path.Path.cwd()}{os.sep}resources'
+                                        f'{os.sep}sources{os.sep}ui_finish.docx')
+
+    save_to_docx(finish_doc, dir_for_save)
 
 
 #####################################################
