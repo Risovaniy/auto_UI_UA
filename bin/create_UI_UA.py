@@ -35,13 +35,16 @@ def combine_word_documents(based_doc, path_merged_doc):
 
     :param based_doc: The main doc at the end of which the new info is copied
     :type based_doc: docx.document.Document
-    :param path_merged_doc: The path to the template to copy (my constants)
-    :type path_merged_doc: str
+    :param path_merged_doc: The path (or object) to the doc for copy
+    :type path_merged_doc: str | docx.document.Document
     :return: Glued Word document
     :rtype: docx.document.Document
 
     """
-    merged_doc = docx.Document(path_merged_doc)
+    if type(path_merged_doc) is str:
+        merged_doc = docx.Document(path_merged_doc)
+    else:
+        merged_doc = path_merged_doc
 
     for element in merged_doc.element.body:
         based_doc.element.body.append(element)
@@ -140,7 +143,7 @@ def fill_ui_table(df_ui):
     """
     # Open of template for ui
     document = docx.Document(f'{path.Path.cwd()}{os.sep}resources{os.sep}'
-                             f'sources{os.sep}ui_part_1.docx')
+                             f'templates{os.sep}ui_part_1.docx')
 
     # Take the last table (1.5 Authors table with column names and 1 empty row)
     table = document.tables[-1]
@@ -193,7 +196,7 @@ def generate_file_ui(df_authors, dir_for_save=''):
     document = fill_ui_table(df_UI)
 
     # Finishing of document
-    path_merged_doc = f'{path.Path.cwd()}{os.sep}sources{os.sep}ui_finish.docx'
+    path_merged_doc = f'{path.Path.cwd()}{os.sep}resources{os.sep}templates{os.sep}ui_finish.docx'
     document = combine_word_documents(document, path_merged_doc)
 
     # Save the document
@@ -225,14 +228,18 @@ def create_df_ua_part1(df_authors):
                                  df_authors['first_name'] + ' ' + \
                                  df_authors['middle_name']
 
-        # It's a datetime column (employment contract or not)
-        finish_df['date_employ'] = pd.to_datetime(df_authors['date_employ'])
-
         # Name and number of contract
         finish_df['contract'] = df_authors['contract']
 
         # Contribution of each authors in the total result
         finish_df['contribution'] = df_authors['contribution']
+
+        # It's a datetime column (employment contract or not)
+        finish_df['date_employ'] = pd.to_datetime(df_authors['date_employ'])
+
+        # TRINITI employee or not (True if works in TRINITI)
+        # ToDo Заполнить данное поле значениями True / False
+        finish_df['TRINITI_employee'] = [finish_df['date_employ'] is not pd.NaN]
 
         return finish_df
     except KeyError:
@@ -257,12 +264,12 @@ def make_table_for_one(df_row, based_doc):
 
     """
     print(f"\tmake_table_for_one\t\tdf_row['date_employ'] = {df_row['date_employ']}")
-    if df_row['date_employ']:
+    if df_row['TRINITI_employee']:
         path_table_for_one = f'{path.Path.cwd()}{os.sep}resources' \
-                             f'{os.sep}ua_table_for_one_from_TRINITI.docx'
+                             f'{os.sep}templates{os.sep}ua_table_for_one_from_TRINITI.docx'
     else:
         path_table_for_one = f'{path.Path.cwd()}{os.sep}resources' \
-                             f'{os.sep}ua_table_for_one_not_from_TRINITI.docx'
+                             f'{os.sep}templates{os.sep}ua_table_for_one_not_from_TRINITI.docx'
 
     # Adding a table to fill in the author's data
     based_doc = combine_word_documents(based_doc, path_table_for_one)
@@ -271,13 +278,13 @@ def make_table_for_one(df_row, based_doc):
     tabel = based_doc.tables[-1]
 
     # Filling in the name
-    tabel.cells(0, 1).text = df_row['full_name']
+    tabel.cell(0, 1).text = df_row['full_name']
 
     # ToDo Check this formatting (employ date)
     # Fill the employ date for authors from TRINITI
-    if df_row['date_employ']:
+    if df_row['TRINITI_employee']:
 
-        paragraph = tabel.cells(5, 2).paragraphs[0]
+        paragraph = tabel.cell(5, 2).paragraphs[0]
         employ_date = df_row['date_employ']
 
         print(f'\t\tmake_table_for_one\t\t"%d" = {str(employ_date.strftime("%d"))}'
@@ -308,10 +315,10 @@ def make_table_for_one(df_row, based_doc):
         paragraph.add_run().text = " г."
 
     # Fill contract
-    tabel.cells(11, 0).text = df_row['contract']
+    tabel.cell(11, 0).text = df_row['contract']
 
     # Fill contribution
-    tabel.cells(17, 1).text = df_row['contribution']
+    tabel.cell(17, 1).text = df_row['contribution']
 
     # Single indent after the table
     based_doc.add_paragraph()
@@ -331,7 +338,7 @@ def fill_part_1_of_ua(df_authors):
     df = create_df_ua_part1(df_authors)
 
     ua_part_1 = docx.Document(f'{path.Path.cwd()}{os.sep}resources'
-                              f'{os.sep}ua_part_1.docx')
+                              f'{os.sep}templates{os.sep}ua_part_1.docx')
 
     for index in df.index:
         ua_part_1 = make_table_for_one(df_row=df.iloc[index],
@@ -377,8 +384,8 @@ def fill_part_2_of_ua(df_ua):
 
     :param df_ua: Prepared dataframe with authors data for the table
     :type df_ua: pandas.core.frame.DataFrame
-    :return: Saves the created UA document (both text and table)
-    :rtype: None
+    :return: The MS doc with the second part of ua
+    :rtype: docx.document.Document
 
     """
     # ToDo Реализовать:
@@ -394,7 +401,7 @@ def fill_part_2_of_ua(df_ua):
 
     # Open the second part of ua
     doc = docx.Document(f'{path.Path.cwd()}{os.sep}resources{os.sep}'
-                        f'sources{os.sep}ua_part_2.docx')
+                        f'templates{os.sep}ua_part_2.docx')
 
     # Calculate a shape of the table
     count_authors = df_ua.shape[0]
@@ -415,7 +422,7 @@ def fill_part_2_of_ua(df_ua):
             # ToDo Проверить ширину подчеркивания - норм или нет, может вообще
             #  просто нижнюю границу ячейки отобразить
             # Cell for signature
-            cell_0.paragraphs[0].add_run().text = '________________/'
+            cell_0.paragraphs[0].add_run().text = '______________/'
 
             # Cell with author name
             run_1 = cell_1.paragraphs[0].add_run()
@@ -454,9 +461,10 @@ def create_sign_date(date):
         sign_date = f'Дата: «__» ____________ 20__г.'
 
     else:
-        # ToDo Месяц необходимо писать буквами на русском языке
+        # ToDo Месяц необходимо писать буквами на русском языке %B - может помочь
+        # ToDo Проверить локаль: всегда ли на русском будет месяц писаться
         sign_date = f'Дата: «{date.strftime("%d")}»' \
-                    f' {date.strftime("%m")} {date.year}г.'
+                    f' {date.strftime("%B")} {date.year}г.'
 
     return sign_date
 
@@ -481,7 +489,7 @@ def generate_file_ua(df_authors, dir_for_save=''):
     finish_doc = combine_word_documents(part_1_of_ua, part_2_of_ua)
     finish_doc = combine_word_documents(finish_doc,
                                         f'{path.Path.cwd()}{os.sep}resources'
-                                        f'{os.sep}sources{os.sep}ui_finish.docx')
+                                        f'{os.sep}templates{os.sep}ui_finish.docx')
 
     save_to_docx(finish_doc, dir_for_save)
 
