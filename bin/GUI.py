@@ -10,10 +10,6 @@ from bin.create_UI_UA import make_only_ui, make_only_UA, make_ui_and_ua, \
 # Location of my global icon
 GLOBAL_ICON = str(f"{path.Path.cwd()}{os.sep}resources{os.sep}global_icon.png")
 
-# ToDo Изменить способ доставания из конфигов - можно как со словарем работать
-# ToDo Изменить способ оформления ранов и параграфов: можно сразу после создания
-#   doc.add_run('Test text').underline = True - если доп оформление одно только
-
 
 def popup_are_you_sure(text='Just text',
                        title='Main title',

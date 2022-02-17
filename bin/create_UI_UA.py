@@ -16,17 +16,8 @@ from bin.load_data import load_and_preprocessing_data, read_config_and_language
 #####################################################
 CONFIG, LANGUAGE = read_config_and_language()
 
-# ToDo Создать шаблоны документов: часть первая (которую можно дополнять),
-#  часть вторая (у УИ - финишная закрывашка, у УА я еще поработаю с ней),
-#  часть третья - только для УА - финишная закрывашка
-
-# ToDo Почистить код, удалить неиспользуемые функции и документы, написать
-#  документации и комментарии
-
-# ToDo Сделать упаковку и установочный скрипт для Астра линукс и проверить на
-#  работоспособность
-
-# ToDo Прописать системные требования к проге (винда 7 не подходит)
+# ToDo Prescribe the system requirements for the program
+#  (Windows 7 is not suitable)
 
 
 def combine_word_documents(based_doc, path_merged_doc):
@@ -238,7 +229,8 @@ def create_df_ua_part1(df_authors):
         finish_df['date_employ'] = pd.to_datetime(df_authors['date_employ'])
 
         # TRINITI employee or not (True if works in TRINITI)
-        # ToDo Заполнить данное поле значениями True / False
+        # ToDo Fill in the fields with True/False values (pay attention to the
+        #  comparison)
         finish_df['TRINITI_employee'] = [finish_df['date_employ'] is not pd.NaN]
 
         return finish_df
@@ -388,17 +380,6 @@ def fill_part_2_of_ua(df_ua):
     :rtype: docx.document.Document
 
     """
-    # ToDo Реализовать:
-    #  1. Открываю шаблон для второй части (ua_part_2.docx)
-    #  2. Расширяю таблицу (учесть если автор один всего (в других доках тоже))
-    #  3. Заполняю таблицу данными из датафрейма
-    #  4. Склеиваю базовый файл с новым сгенерированным (новый в конец)
-    #  5. Уже потом в конец добавляю заглушку (копированием из ua_finish.docx)
-
-    # ToDo Нечетные строки - авторы и их подписи,
-    #      Четные - подсказки под ячейками
-    #      Названий столбцов нет у этой таблицы
-
     # Open the second part of ua
     doc = docx.Document(f'{path.Path.cwd()}{os.sep}resources{os.sep}'
                         f'templates{os.sep}ua_part_2.docx')
@@ -419,8 +400,7 @@ def fill_part_2_of_ua(df_ua):
         cell_2 = table.cell(row, 2)
 
         if row % 2 == 0:
-            # ToDo Проверить ширину подчеркивания - норм или нет, может вообще
-            #  просто нижнюю границу ячейки отобразить
+            # ToDo Check underscore width - normal or not
             # Cell for signature
             cell_0.paragraphs[0].add_run().text = '______________/'
 
@@ -434,14 +414,15 @@ def fill_part_2_of_ua(df_ua):
             run_2.text = create_sign_date(date=df_ua['date_UA'].iloc[int(row/2)])
 
         else:
-            # ToDo Проверить хвататет ли стилей, делают ли они нужный размер шрифта и выравнивание?
             # Explanations under the data
             cell_0.paragraphs[0].add_run().text = '(подпись)'
             cell_1.paragraphs[0].add_run().text = '(Фамилия И. О.)'
 
     # Applying styles to a table (For even and odd rows, then for the header)
-    # ToDo Реализовать применение стилей к таблице - смогу ли я применить стили построчно?
-    #  Может засунуть в верхний if и применять к каждой строке нужный стиль (чередование)
+    # ToDo Options for applying styles to the table:
+    #  A. Apply styles to even and odd lines (will the library allow?)
+    #  B. Apply a general style (for the main text (even lines) and manually:
+    #  set the size to odd lines, underline the last name
 
     return doc
 
@@ -461,8 +442,9 @@ def create_sign_date(date):
         sign_date = f'Дата: «__» ____________ 20__г.'
 
     else:
-        # ToDo Месяц необходимо писать буквами на русском языке %B - может помочь
-        # ToDo Проверить локаль: всегда ли на русском будет месяц писаться
+        # ToDo A month to write letters in Russian (Maybe '%B')
+        # ToDo Check the dependence on the global PC locale
+        #  (Is it always in Russian?)
         sign_date = f'Дата: «{date.strftime("%d")}»' \
                     f' {date.strftime("%B")} {date.year}г.'
 
